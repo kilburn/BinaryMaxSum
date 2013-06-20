@@ -1,0 +1,9 @@
+# Place where to hold downloaded dependencies
+dependencies
+
+# Compiled classes/jars
+build
+dist
+
+# Netbeans stuff
+nbproject/private
