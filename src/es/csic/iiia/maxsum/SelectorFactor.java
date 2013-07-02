@@ -58,7 +58,7 @@ public class SelectorFactor<T> extends AbstractFactor<T> {
     }
 
     @Override
-    public void run() {
+    public long run() {
         // Compute the minimums
         tracker.reset();
         for (T f : getNeighbors()) {
@@ -70,6 +70,8 @@ public class SelectorFactor<T> extends AbstractFactor<T> {
             final double value = - tracker.getComplementary(f);
             send(value, f);
         }
+        
+        return getNeighbors().size()*2;
     }
 
     /**

@@ -117,7 +117,9 @@ public interface Factor<T extends Object> {
 
     /**
      * Run the this factor (process incoming messages and send out new ones).
+     * 
+     * @return number of Constraint Checks performed by this node.
      */
-    public void run();
+    public long run();
 
 }

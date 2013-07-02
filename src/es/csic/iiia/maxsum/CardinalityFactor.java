@@ -37,7 +37,6 @@
 package es.csic.iiia.maxsum;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
@@ -59,6 +58,8 @@ public class CardinalityFactor<T> extends AbstractFactor<T> {
     private static final Logger LOG = Logger.getLogger(CardinalityFactor.class.getName());
 
     private CardinalityFunction function;
+    
+    private long constraintChecks;
 
     /**
      * Set the workload function f that returns the cost depending on the
@@ -71,7 +72,8 @@ public class CardinalityFactor<T> extends AbstractFactor<T> {
     }
 
     @Override
-    public void run() {
+    public long run() {
+        constraintChecks = 0;
         final MaxOperator operator = getMaxOperator();
         final int size = getNeighbors().size();
 
@@ -81,6 +83,7 @@ public class CardinalityFactor<T> extends AbstractFactor<T> {
         for (T f : getNeighbors()) {
             vals_and_indices.add(new Triplet(f, getMessage(f), i++));
         }
+        constraintChecks += size;
 
         // Sort them from best to worst
         Collections.sort(vals_and_indices);
@@ -118,6 +121,7 @@ public class CardinalityFactor<T> extends AbstractFactor<T> {
                 cum_w_s1[i] = operator.getWorstValue();
             }
         }
+        constraintChecks += size*4;
 
         // Cumulative maxes
         double[] m_1 = new double[size+1];
@@ -139,6 +143,7 @@ public class CardinalityFactor<T> extends AbstractFactor<T> {
             }
 
         }
+        constraintChecks += size*4;
 
         int pos;
         double msg0;
@@ -162,8 +167,9 @@ public class CardinalityFactor<T> extends AbstractFactor<T> {
             LOG.log(Level.FINE, "Msg1: {0}, Msg0:{1}", new Object[]{msg1, msg0});
             send(msg1 - msg0, f);
         }
+        constraintChecks += size*3;
 
-
+        return constraintChecks;
     }
 
     private class Triplet implements Comparable<Triplet> {
@@ -183,6 +189,8 @@ public class CardinalityFactor<T> extends AbstractFactor<T> {
 
         @Override
         public int compareTo(Triplet t) {
+            constraintChecks++;
+            
             if (cost == t.cost) {
                 return 0;
             }
@@ -192,5 +200,5 @@ public class CardinalityFactor<T> extends AbstractFactor<T> {
             return 1;
         }
     }
-
+    
 }
