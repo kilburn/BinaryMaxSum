@@ -81,6 +81,10 @@ public class BestValuesTracker<T> {
         return (T)objects[0];
     }
 
+    public double getBestValue() {
+        return values[0];
+    }
+
     public void track(T t, double value) {
         count++;
 

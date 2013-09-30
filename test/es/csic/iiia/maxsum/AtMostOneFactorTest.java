@@ -38,6 +38,7 @@ package es.csic.iiia.maxsum;
 
 import static org.mockito.Mockito.*;
 import static org.mockito.AdditionalMatchers.eq;
+import static org.junit.Assert.*;
 import org.junit.Test;
 
 /**
@@ -52,33 +53,45 @@ public class AtMostOneFactorTest {
     public void testRun1() {
         double[] values  = new double[]{0, 1, 2};
         double[] results = new double[]{0, 0, 0};
-        run(new Minimize(), values, results);
+        run(new Minimize(), values, results, 0);
         
         results = new double[]{-2, -2, -1};
-        run(new Maximize(), values, results);
+        run(new Maximize(), values, results, 2);
     }
 
     @Test
     public void testRun2() {
         double[] values  = new double[]{0, 0, 2};
         double[] results = new double[]{0, 0, 0};
-        run(new Minimize(), values, results);
+        run(new Minimize(), values, results, 1);
         
         results = new double[]{-2, -2, 0};
-        run(new Maximize(), values, results);
+        run(new Maximize(), values, results, 2);
     }
 
     @Test
     public void testRun3() {
         double[] values  = new double[]{-1, 2};
         double[] results = new double[]{0, 1};
-        run(new Minimize(), values, results);
+        run(new Minimize(), values, results, 0);
         
         results = new double[]{-2, 0};
-        run(new Maximize(), values, results);
+        run(new Maximize(), values, results, 1);
     }
 
-    private void run(MaxOperator op, double[] values, double[] results) {
+    @Test
+    public void testRun4() {
+        double[] values  = new double[]{1, 2};
+        double[] results = new double[]{0, 0};
+        run(new Minimize(), values, results, -1);
+
+        results = new double[]{-2, -1};
+        run(new Maximize(), values, results, 1);
+    }
+
+    private void run(MaxOperator op, double[] values, double[] results,
+            int choice)
+    {
         CommunicationAdapter com = mock(CommunicationAdapter.class);
         
         // Setup incoming messages
@@ -94,6 +107,7 @@ public class AtMostOneFactorTest {
             s.addNeighbor(cfs[i]);
             s.receive(values[i], cfs[i]);
         }
+        Object expectedChoice = choice >= 0 ? cfs[choice] : null;
 
         // This makes the factor run and send messages through the mocked com
         s.run();
@@ -101,5 +115,7 @@ public class AtMostOneFactorTest {
         for (int i=0; i<cfs.length; i++) {
             verify(com).send(eq(results[i], DELTA), same(s), same(cfs[i]));
         }
+
+        assertEquals(expectedChoice, s.select());
     }
 }

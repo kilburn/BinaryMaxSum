@@ -81,7 +81,15 @@ public class AtMostOneFactor<T> extends AbstractFactor<T> {
      * @return the best fitting neighbor factor.
      */
     public T select() {
-        return tracker.getBest();
+        double bestChoiceValue = tracker.getBestValue();
+
+        // Check wether to pick the best choice, or do nothing
+        if (getMaxOperator().max(bestChoiceValue, 0) == bestChoiceValue) {
+            return tracker.getBest();
+        }
+
+        // Do nothing
+        return null;
     }
 
 }
