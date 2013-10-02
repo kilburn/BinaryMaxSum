@@ -38,30 +38,36 @@ package es.csic.iiia.maxsum;
 
 /**
  * Definition of the <em>max</em> operator used by the max-sum algorithm.
- * 
+ *
  * @author Marc Pujol <mpujol@iiia.csic.es>
  */
 public interface MaxOperator {
-    
+
     /**
      * Operates two values, returning the better one according to this operator
-     * 
+     *
      * @param value1 first value
      * @param value2 second value
      * @return best value between the given ones
      */
     public double max(double value1, double value2);
-    
+
+    /**
+     * Compares two values, returning -1 if the first is worst, 0 if they are equal, or 1 if the
+     * first value is better.
+     */
+    public int compare(double first, double second);
+
     /**
      * Returns the wors possible value for this operator.
      * <p/>
      * The returned value is one such that when operated with another value, the
      * result is always the other value:
-     * 
+     *
      * <code>operate(value, getWorstValue()) == value</Code>
-     * 
+     *
      * @return the worst possible value for this operator.
      */
     public double getWorstValue();
-    
+
 }

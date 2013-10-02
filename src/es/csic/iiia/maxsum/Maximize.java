@@ -38,7 +38,7 @@ package es.csic.iiia.maxsum;
 
 /**
  * Max-sum max operator that uses the <em>max</em> function.
- * 
+ *
  * @author Marc Pujol <mpujol@iiia.csic.es>
  */
 public class Maximize implements MaxOperator {
@@ -47,10 +47,15 @@ public class Maximize implements MaxOperator {
     public double max(double value1, double value2) {
         return Math.max(value1, value2);
     }
-    
+
+    @Override
+    public int compare(double first, double second) {
+        return Double.compare(first, second);
+    }
+
     @Override
     public double getWorstValue() {
         return Double.NEGATIVE_INFINITY;
     }
-    
+
 }

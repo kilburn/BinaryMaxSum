@@ -46,7 +46,7 @@ import java.util.logging.Logger;
  * Maxsum workload factor with integrated independent costs.
  * <p/>
  * This factor is the combination of an independent cost evaluation for each of
- * the connected variables, plus an extra cost defined by a 
+ * the connected variables, plus an extra cost defined by a
  * {@link WorkloadFunction}.
  * <p/>
  * Outgoing messages are computed in <em>O(n*log(n))</em> time, where <em>n</em>
@@ -58,7 +58,7 @@ public class CardinalityFactor<T> extends AbstractFactor<T> {
     private static final Logger LOG = Logger.getLogger(CardinalityFactor.class.getName());
 
     private CardinalityFunction function;
-    
+
     private long constraintChecks;
 
     /**
@@ -190,15 +190,9 @@ public class CardinalityFactor<T> extends AbstractFactor<T> {
         @Override
         public int compareTo(Triplet t) {
             constraintChecks++;
-            
-            if (cost == t.cost) {
-                return 0;
-            }
-            if (getMaxOperator().max(cost, t.cost) == cost) {
-                return -1;
-            }
-            return 1;
+
+            return -getMaxOperator().compare(cost, t.cost);
         }
     }
-    
+
 }
