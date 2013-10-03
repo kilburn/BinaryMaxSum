@@ -34,45 +34,24 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package es.csic.iiia.maxsum;
+package es.csic.iiia.maxsum.factors.cardinality;
 
 /**
- * Workload function that enforces no more than <em>k</em> variables to be
- * active at the same time.
- * 
+ * Interface of a workload function.
+ * <p/>
+ * A workload function is a function that returns a cost depending on the number
+ * of variables to be active.
+ *
  * @author Marc Pujol <mpujol@iiia.csic.es>
  */
-public class MaxAgFunction implements CardinalityFunction {
-    
-    private final int maxActiveVariables;
-    
-    private double utility;
-    
-    /**
-     * Builds a new MaxAgFunction that prevents more than the given maximum
-     * number of variables to be active at the same time, by introducing the
-     * specified amount of utility whenever the constraint is violated.
-     * 
-     * @param maxActiveVariables 
-     */
-    public MaxAgFunction(int maxActiveVariables, double utility) {
-        this.maxActiveVariables = maxActiveVariables;
-        this.utility = utility;
-    }
+public interface CardinalityFunction {
 
     /**
-     * Get the cost of activating the given number of variables.
-     * 
-     * @param numActiveVariables number of variables to activate.
-     * @return Infinity if the given number of variables is above the maximum
-     * allowable, or 0 otherwise.
+     * Get the cost of activating the given number variables.
+     *
+     * @param nActiveVariables number of active variables
+     * @return cost of activating that many variables
      */
-    @Override
-    public double getCost(int numActiveVariables) {
-        if (numActiveVariables > maxActiveVariables) {
-            return utility;
-        }
-        return 0;
-    }
-    
+    public double getCost(int nActiveVariables);
+
 }

@@ -34,8 +34,20 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package es.csic.iiia.maxsum;
+package es.csic.iiia.maxsum.factors;
 
+import es.csic.iiia.maxsum.Factor;
+import es.csic.iiia.maxsum.factors.cardinality.CardinalityFunction;
+import es.csic.iiia.maxsum.CommunicationAdapter;
+import es.csic.iiia.maxsum.factors.cardinality.KAlphaFunction;
+import es.csic.iiia.maxsum.factors.cardinality.MaxAgFunction;
+import es.csic.iiia.maxsum.MaxOperator;
+import es.csic.iiia.maxsum.Maximize;
+import es.csic.iiia.maxsum.Minimize;
+import es.csic.iiia.maxsum.TickCommunicationAdapter;
+import es.csic.iiia.maxsum.factors.CardinalityFactor;
+import es.csic.iiia.maxsum.factors.CompositeIndependentFactor;
+import es.csic.iiia.maxsum.factors.IndependentFactor;
 import java.util.logging.Logger;
 import static org.mockito.Mockito.*;
 import static org.mockito.AdditionalMatchers.eq;

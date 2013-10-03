@@ -34,56 +34,57 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package es.csic.iiia.maxsum;
+package es.csic.iiia.maxsum.factors;
 
-import es.csic.iiia.maxsum.Factor;
-import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import es.csic.iiia.maxsum.util.BestValuesTracker;
+import es.csic.iiia.maxsum.MaxOperator;
+import es.csic.iiia.maxsum.factors.AbstractFactor;
 
 /**
- * Communication adapter that delivers messages by rounds.
+ * Max-sum selector factor.
+ *
+ * This factor tries to ensure that only one of its neighboring variables are
+ * active at the same time.
  * <p/>
- * This adapter buffers all the messages being sent, and only delivers them
- * when it is ticked. This makes it very easy to implement lock-stepped max-sum,
- * provided that you do *not* need to send the messages through a simulated 
- * network and/or tamper with them in any way.
+ * Outgoing messages are computed in <em>O(n)</em> time, where <em>n</em> is the
+ * total number of variables connected to this factor.
  * 
  * @author Marc Pujol <mpujol@iiia.csic.es>
  */
-public class TickCommunicationAdapter<T extends Factor> implements CommunicationAdapter<Factor> {
-    private static final Logger LOG = Logger.getLogger(TickCommunicationAdapter.class.getName());
-    
-    private ArrayList<Message> buffer = new ArrayList<Message>();
+public class SelectorFactor<T> extends AbstractFactor<T> {
+
+    private BestValuesTracker<T> tracker; 
 
     @Override
-    public void send(double message, Factor sender, Factor recipient) {
-        LOG.log(Level.FINEST, "Message from {0} to {1} : {2}", new Object[]{sender, recipient, message});
-        buffer.add(new Message(message, sender, recipient));
+    public void setMaxOperator(MaxOperator maxOperator) {
+        super.setMaxOperator(maxOperator);
+        tracker = new BestValuesTracker<T>(maxOperator);
     }
-    
-    /**
-     * Messages are buffered until the channel is ticked, when it delivers all
-     * of the messages sent since the last tick.
-     */
-    public void tick() {
-        for (Message m : buffer) {
-            m.recipient.receive(m.value, m.sender);
+
+    @Override
+    public long run() {
+        // Compute the minimums
+        tracker.reset();
+        for (T f : getNeighbors()) {
+            tracker.track(f, getMessage(f));
         }
-    }
-    
-    /**
-     * This is just a holder of typed values. Nothing special about it.
-     */
-    private class Message {
-        public final double value;
-        public final Factor sender;
-        public final Factor recipient;
-        public Message(double value, Factor sender, Factor recipient) {
-            this.value = value;
-            this.sender = sender;
-            this.recipient = recipient;
+        
+        // Send messages
+        for (T f : getNeighbors()) {
+            final double value = - tracker.getComplementary(f);
+            send(value, f);
         }
+        
+        return getNeighbors().size()*2;
     }
-    
+
+    /**
+     * Pick the "winning" neighboring factor.
+     *
+     * @return the best fitting neighbor factor.
+     */
+    public T select() {
+        return tracker.getBest();
+    }
+
 }

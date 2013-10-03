@@ -36,7 +36,6 @@
  */
 
 /**
- * Implementaiton of the binarized max-sum algorithm as interactions between
- * factors.
+ * Utility classes that don't fit anywhere else.
  */
-package es.csic.iiia.maxsum;
+package es.csic.iiia.maxsum.util;

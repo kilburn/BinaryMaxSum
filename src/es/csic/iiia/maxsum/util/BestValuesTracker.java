@@ -1,7 +1,7 @@
 /*
  * Software License Agreement (BSD License)
  *
- * Copyright 2013 Marc Pujol <mpujol@iiia.csic.es>.
+ * Copyright 2012 Marc Pujol <mpujol@iiia.csic.es>.
  *
  * Redistribution and use of this software in source and binary forms, with or
  * without modification, are permitted provided that the following conditions
@@ -34,62 +34,79 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package es.csic.iiia.maxsum;
+package es.csic.iiia.maxsum.util;
+
+import es.csic.iiia.maxsum.MaxOperator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- * Max-sum "at most one" factor.
+ * Utitlity class to compute the two best objects among a couple of them.
  *
- * This factor tries to ensure that at most one of the neighbors is chosen.
- * That is, f(x_1, ..., x_n) = 0 if (\sum_i x_i) <=1 or (-)\infty otherwise.
- * <p/>
- * Outgoing messages are computed in <em>O(n)</em> time, where <em>n</em> is the
- * total number of variables connected to this factor.
- * 
  * @author Marc Pujol <mpujol@iiia.csic.es>
  */
-public class AtMostOneFactor<T> extends AbstractFactor<T> {
+public class BestValuesTracker<T> {
+    private static final Logger LOG = Logger.getLogger(BestValuesTracker.class.getName());
 
-    private BestValuesTracker<T> tracker; 
+    private MaxOperator operator;
+    private final double[] values;
+    private final Object[] objects;
+    private int count = 0;
 
-    @Override
-    public void setMaxOperator(MaxOperator maxOperator) {
-        super.setMaxOperator(maxOperator);
-        tracker = new BestValuesTracker<T>(maxOperator);
+    public BestValuesTracker(MaxOperator operator) {
+        values = new double[2];
+        objects = new Object[2];
+        this.operator = operator;
+    }
+
+    public void reset() {
+        LOG.finest("Tracking start");
+        values[0] = values[1] = operator.getWorstValue();
+        objects[0] = null; objects[1] = null;
+        count = 0;
+    }
+
+    public double getComplementary(T t) {
+        if (count == 0) {
+            return 0;
+        }
+
+        if (t == objects[0]) {
+            return count == 1 ? 0 : values[1];
+        }
+
+        return count > 0 ? values[0] : 0;
+    }
+
+    public T getBest() {
+        return (T)objects[0];
+    }
+
+    public double getBestValue() {
+        return values[0];
+    }
+
+    public void track(T t, double value) {
+        count++;
+
+        LOG.log(Level.FINEST, "BestValues tracking {0}", value);
+
+        if (operator.max(value, values[0]) == value) {
+            values[1]  = values[0];     values[0]  = value;
+            objects[1] = objects[0];    objects[0] = t;
+            return;
+        }
+
+        if (operator.max(value, values[1]) == value) {
+            values[1]  = value;
+            objects[1] = t;
+        }
+
     }
 
     @Override
-    public long run() {
-        // Compute the minimums
-        tracker.reset();
-        for (T f : getNeighbors()) {
-            tracker.track(f, getMessage(f));
-        }
-        
-        // Send messages
-        for (T f : getNeighbors()) {
-            final double value = - getMaxOperator().max(
-                    0, tracker.getComplementary(f));
-            send(value, f);
-        }
-        
-        return getNeighbors().size()*2;
-    }
-
-    /**
-     * Pick the "winning" neighboring factor.
-     *
-     * @return the best fitting neighbor factor.
-     */
-    public T select() {
-        double bestChoiceValue = tracker.getBestValue();
-
-        // Check wether to pick the best choice, or do nothing
-        if (getMaxOperator().max(bestChoiceValue, 0) == bestChoiceValue) {
-            return tracker.getBest();
-        }
-
-        // Do nothing
-        return null;
+    public String toString() {
+        return "Best(" + values[0] + "," + values[1] + ")[" + count + "]";
     }
 
 }

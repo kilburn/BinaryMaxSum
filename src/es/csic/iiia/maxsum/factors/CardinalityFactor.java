@@ -34,8 +34,10 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package es.csic.iiia.maxsum;
+package es.csic.iiia.maxsum.factors;
 
+import es.csic.iiia.maxsum.factors.cardinality.CardinalityFunction;
+import es.csic.iiia.maxsum.MaxOperator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

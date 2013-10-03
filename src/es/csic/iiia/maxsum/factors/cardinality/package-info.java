@@ -34,24 +34,8 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package es.csic.iiia.maxsum;
 
 /**
- * Interface of a workload function.
- * <p/>
- * A workload function is a function that returns a cost depending on the number
- * of variables to be active.
- *
- * @author Marc Pujol <mpujol@iiia.csic.es>
+ * Support files for the general efficient cardinality factor.
  */
-public interface CardinalityFunction {
-
-    /**
-     * Get the cost of activating the given number variables.
-     *
-     * @param nActiveVariables number of active variables
-     * @return cost of activating that many variables
-     */
-    public double getCost(int nActiveVariables);
-
-}
+package es.csic.iiia.maxsum.factors.cardinality;

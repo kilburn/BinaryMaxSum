@@ -34,39 +34,76 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package es.csic.iiia.maxsum;
+package es.csic.iiia.maxsum.factors;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * Workload function that computes the extra cost of activating <em>n</em>
- * variables (servicing <em>n</em> requests) as <em>k*n^alpha</em>.
+ * Factor that includes an independent cost/utility for each of the
+ * variables in its scope (its neighbors).
  *
  * @author Marc Pujol <mpujol@iiia.csic.es>
  */
-public class KAlphaFunction implements CardinalityFunction {
+public class IndependentFactor<T> extends AbstractFactor<T> {
 
-    private double k;
-    private double alpha;
+    private Map<T, Double> potential = new HashMap<T, Double>();
 
     /**
-     * Build a new k-alpha workload function.
-     *
-     * @param k k value to employ
-     * @param alpha alpha value to employ
+     * Remove all potential costs.
      */
-    public KAlphaFunction(double k, double alpha) {
-        this.k = k;
-        this.alpha = alpha;
+    public void clearPotentials() {
+        potential.clear();
     }
 
     /**
-     * Get the cost of activating <em>n</em> variables.
+     * Get the cost/utility of activating the variable shared with the given
+     * neighbor.
      *
-     * @param n number of variables to activate
-     * @return cost associated to activating <em>n</em> variables
+     * @param neighbor neighbor to consider
+     * @return cost of activating the given neighbor
+     */
+    public double getPotential(T neighbor) {
+        if (!potential.containsKey(neighbor)) {
+            throw new IllegalArgumentException("Requested potential for a non-existant neighbor");
+        }
+        return potential.get(neighbor);
+    }
+
+    /**
+     * Remove the cost associated to activating the given factor.
+     *
+     * @param f factor to consider
+     * @return previous cost of activating the given factor
+     */
+    public Double removePotential(T f) {
+        return potential.remove(f);
+    }
+
+    /**
+     * Set the independent cost of activating the variable that corresponds to
+     * the given neighbor.
+     *
+     * @param neighbor neighbor with which this one shares a binary variable
+     * @param value cost/utility of activating this neighbor
+     */
+    public void setPotential(T factor, double value) {
+        potential.put(factor, value);
+    }
+
+    /**
+     * Run an iteration of this factor.
+     *
+     * In this case, this amounts to sending the cost associated to each
+     * of its neighbors out.
      */
     @Override
-    public double getCost(int n) {
-        return k * Math.pow(n, alpha);
+    public long run() {
+        for (T neighbor : getNeighbors()) {
+            send(getPotential(neighbor), neighbor);
+        }
+
+        return getNeighbors().size();
     }
 
 }

@@ -34,8 +34,14 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package es.csic.iiia.maxsum;
+package es.csic.iiia.maxsum.factors;
 
+import es.csic.iiia.maxsum.CommunicationAdapter;
+import es.csic.iiia.maxsum.MaxOperator;
+import es.csic.iiia.maxsum.Maximize;
+import es.csic.iiia.maxsum.Minimize;
+import es.csic.iiia.maxsum.factors.CardinalityFactor;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.mockito.AdditionalMatchers.eq;
 import org.junit.Test;
@@ -44,7 +50,7 @@ import org.junit.Test;
  *
  * @author Marc Pujol <mpujol@iiia.csic.es>
  */
-public class CardinalityFactorTest {
+public class SelectorFactorTest {
 
     private final double DELTA = 0.0001d;
 
@@ -53,7 +59,7 @@ public class CardinalityFactorTest {
         double[] values  = new double[]{0, 1, 2};
         double[] results = new double[]{-1, 0, 0};
         run(new Minimize(), values, results, 0);
-
+        
         results = new double[]{-2, -2, -1};
         run(new Maximize(), values, results, 2);
     }
@@ -63,7 +69,7 @@ public class CardinalityFactorTest {
         double[] values  = new double[]{0, 0, 2};
         double[] results = new double[]{0, 0, 0};
         run(new Minimize(), values, results, 1);
-
+        
         results = new double[]{-2, -2, 0};
         run(new Maximize(), values, results, 2);
     }
@@ -73,32 +79,23 @@ public class CardinalityFactorTest {
         double[] values  = new double[]{-1, 2};
         double[] results = new double[]{-2, 1};
         run(new Minimize(), values, results, 0);
-
+        
         results = new double[]{-2, 1};
         run(new Maximize(), values, results, 1);
     }
 
-    private void run(final MaxOperator op, double[] values, double[] results,
+    private void run(MaxOperator op, double[] values, double[] results,
             int choice)
     {
         CommunicationAdapter com = mock(CommunicationAdapter.class);
-
+        
         // Setup incoming messages
         CardinalityFactor[] cfs = new CardinalityFactor[values.length];
-        CardinalityFactor s = new CardinalityFactor();
-        s.setFunction(new CardinalityFunction() {
-            @Override
-            public double getCost(int nActiveVariables) {
-                if (nActiveVariables != 1) {
-                    return op.getWorstValue();
-                }
-                return 0;
-            }
-        });
+        SelectorFactor s = new SelectorFactor();
         s.setCommunicationAdapter(com);
         s.setMaxOperator(op);
         s.setIdentity(s);
-
+        
         for (int i=0; i<cfs.length; i++) {
             cfs[i] = new CardinalityFactor();
             s.addNeighbor(cfs[i]);
@@ -112,5 +109,7 @@ public class CardinalityFactorTest {
         for (int i=0; i<cfs.length; i++) {
             verify(com).send(eq(results[i], DELTA), same(s), same(cfs[i]));
         }
+
+        assertEquals(expectedChoice, s.select());
     }
 }

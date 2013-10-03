@@ -34,7 +34,11 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package es.csic.iiia.maxsum;
+package es.csic.iiia.maxsum.factors;
+
+import es.csic.iiia.maxsum.util.BestValuesTracker;
+import es.csic.iiia.maxsum.MaxOperator;
+import es.csic.iiia.maxsum.factors.AbstractFactor;
 
 /**
  * Max-sum conditioned selector factor.
@@ -51,7 +55,7 @@ package es.csic.iiia.maxsum;
  *
  * @author Marc Pujol <mpujol@iiia.csic.es>
  */
-public class ConditionedSelector<T> extends AbstractFactor<T> {
+public class ConditionedSelectorFactor<T> extends AbstractFactor<T> {
 
     private BestValuesTracker<T> tracker;
 

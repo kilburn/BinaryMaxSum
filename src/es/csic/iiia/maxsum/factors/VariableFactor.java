@@ -34,53 +34,39 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package es.csic.iiia.maxsum;
+package es.csic.iiia.maxsum.factors;
 
 /**
- * Max-sum selector factor.
+ * Factor defined over a single variable (variable node in classical MaxSum).
  *
- * This factor tries to ensure that only one of its neighboring variables are
- * active at the same time.
- * <p/>
- * Outgoing messages are computed in <em>O(n)</em> time, where <em>n</em> is the
- * total number of variables connected to this factor.
- * 
  * @author Marc Pujol <mpujol@iiia.csic.es>
  */
-public class SelectorFactor<T> extends AbstractFactor<T> {
-
-    private BestValuesTracker<T> tracker; 
-
-    @Override
-    public void setMaxOperator(MaxOperator maxOperator) {
-        super.setMaxOperator(maxOperator);
-        tracker = new BestValuesTracker<T>(maxOperator);
-    }
-
-    @Override
-    public long run() {
-        // Compute the minimums
-        tracker.reset();
-        for (T f : getNeighbors()) {
-            tracker.track(f, getMessage(f));
-        }
-        
-        // Send messages
-        for (T f : getNeighbors()) {
-            final double value = - tracker.getComplementary(f);
-            send(value, f);
-        }
-        
-        return getNeighbors().size()*2;
-    }
+public class VariableFactor<T> extends AbstractFactor<T> {
 
     /**
-     * Pick the "winning" neighboring factor.
+     * Computes and sends the messages of this factor, using the formula:
      *
-     * @return the best fitting neighbor factor.
+     * \nu_{n_i} =  [ \sum_{n_j \in N} \nu_{n_j} ] - \nu_{n_i}
+     *
+     * where N is the set of neighbors of this factor.
+     *
+     * @return number of Constraint Checks performed by this node.
      */
-    public T select() {
-        return tracker.getBest();
+    @Override
+    public long run() {
+        double belief = 0;
+
+        for (T f : getNeighbors()) {
+            belief += getMessage(f);
+        }
+
+        // Send messages
+        for (T f : getNeighbors()) {
+            final double value = belief - getMessage(f);
+            send(value, f);
+        }
+
+        return getNeighbors().size()*2;
     }
 
 }

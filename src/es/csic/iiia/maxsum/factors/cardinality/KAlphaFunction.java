@@ -34,30 +34,39 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package es.csic.iiia.maxsum;
+package es.csic.iiia.maxsum.factors.cardinality;
 
 /**
- * Factor defined over a single variable (variable node in classical MaxSum).
+ * Workload function that computes the extra cost of activating <em>n</em>
+ * variables (servicing <em>n</em> requests) as <em>k*n^alpha</em>.
  *
  * @author Marc Pujol <mpujol@iiia.csic.es>
  */
-public class VariableFactor<T> extends AbstractFactor<T> {
+public class KAlphaFunction implements CardinalityFunction {
 
+    private double k;
+    private double alpha;
+
+    /**
+     * Build a new k-alpha workload function.
+     *
+     * @param k k value to employ
+     * @param alpha alpha value to employ
+     */
+    public KAlphaFunction(double k, double alpha) {
+        this.k = k;
+        this.alpha = alpha;
+    }
+
+    /**
+     * Get the cost of activating <em>n</em> variables.
+     *
+     * @param n number of variables to activate
+     * @return cost associated to activating <em>n</em> variables
+     */
     @Override
-    public long run() {
-        double belief = 0;
-
-        for (T f : getNeighbors()) {
-            belief += getMessage(f);
-        }
-
-        // Send messages
-        for (T f : getNeighbors()) {
-            final double value = belief - getMessage(f);
-            send(value, f);
-        }
-
-        return getNeighbors().size()*2;
+    public double getCost(int n) {
+        return k * Math.pow(n, alpha);
     }
 
 }

@@ -36,6 +36,7 @@
  */
 package es.csic.iiia.maxsum;
 
+import es.csic.iiia.maxsum.MaxOperator;
 import java.util.List;
 
 /**

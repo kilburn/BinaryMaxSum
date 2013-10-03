@@ -36,7 +36,6 @@
  */
 
 /**
- * Implementaiton of the binarized max-sum algorithm as interactions between
- * factors.
+ * Efficient implementations of some particular higher-order factors.
  */
-package es.csic.iiia.maxsum;
+package es.csic.iiia.maxsum.factors;
