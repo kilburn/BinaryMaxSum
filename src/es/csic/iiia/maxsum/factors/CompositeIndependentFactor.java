@@ -42,23 +42,23 @@ import es.csic.iiia.maxsum.MaxOperator;
 import java.util.List;
 
 /**
- * This factor composes (sums) an independent cost/utility factor with some 
+ * This factor composes (sums) an independent cost/utility factor with some
  * other <em>inner</em> (non-idependent) factor.
  * <p/>
  * The resulting complexity is the same as that of the inner factor.
- * 
+ *
  * @author Marc Pujol <mpujol@iiia.csic.es>
  */
-public class CompositeIndependentFactor<T> extends AbstractFactor<T> 
+public class CompositeIndependentFactor<T> extends AbstractFactor<T>
     implements CommunicationAdapter<T>
 {
-    
+
     private Factor<T> innerFactor;
     private IndependentFactor<T> independentFactor;
 
     /**
      * Get the inner (non-independent) factor of this composition.
-     * 
+     *
      * @return inner factor of this composition.
      */
     public Factor<T> getInnerFactor() {
@@ -91,7 +91,7 @@ public class CompositeIndependentFactor<T> extends AbstractFactor<T>
     public void setIndependentFactor(IndependentFactor<T> independentFactor) {
         this.independentFactor = independentFactor;
     }
-    
+
     @Override
     public void receive(double message, T sender) {
         double value = message + independentFactor.getPotential(sender);
@@ -99,19 +99,19 @@ public class CompositeIndependentFactor<T> extends AbstractFactor<T>
     }
 
     /**
-     * This is the method called by the inner factor when trying to send 
+     * This is the method called by the inner factor when trying to send
      * messages out.
-     * 
+     *
      * @param message
      * @param sender
-     * @param recipient 
+     * @param recipient
      */
     @Override
     public void send(double message, T sender, T recipient) {
         double value = message + independentFactor.getPotential(recipient);
         getCommunicationAdapter().send(value, sender, recipient);
     }
-    
+
     @Override
     public void setIdentity(T identity) {
         super.setIdentity(identity);
@@ -144,8 +144,8 @@ public class CompositeIndependentFactor<T> extends AbstractFactor<T>
     }
 
     @Override
-    public long run() {
+    public long iter() {
         return getNeighbors().size() + innerFactor.run();
     }
-    
+
 }

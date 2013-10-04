@@ -77,7 +77,7 @@ public class ConditionedSelectorFactor<T> extends AbstractFactor<T> {
     }
 
     @Override
-    public long run() {
+    public long iter() {
 
         // Compute the maximums between the dependent variables
         tracker.reset();

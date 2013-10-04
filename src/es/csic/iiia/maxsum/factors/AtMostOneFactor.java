@@ -61,7 +61,7 @@ public class AtMostOneFactor<T> extends AbstractFactor<T> {
     }
 
     @Override
-    public long run() {
+    public long iter() {
         // Compute the minimums
         tracker.reset();
         for (T f : getNeighbors()) {

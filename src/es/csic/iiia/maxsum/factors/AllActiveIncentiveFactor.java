@@ -87,7 +87,7 @@ public class AllActiveIncentiveFactor<T> extends AbstractFactor<T> {
      * @return number of Constraint Checks performed by this node.
      */
     @Override
-    public long run() {
+    public long iter() {
 
         double fullSum = 0;
         double onlyGoodsSum = 0;

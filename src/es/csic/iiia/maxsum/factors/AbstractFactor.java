@@ -66,7 +66,7 @@ public abstract class AbstractFactor<T> implements Factor<T> {
     public void setMaxOperator(MaxOperator maxOperator) {
         this.maxOperator = maxOperator;
     }
-    
+
     @Override
     public T getIdentity() {
         return identity;
@@ -86,10 +86,11 @@ public abstract class AbstractFactor<T> implements Factor<T> {
     public void setCommunicationAdapter(CommunicationAdapter<T> communicationAdapter) {
         this.communicationAdapter = communicationAdapter;
     }
-    
+
     @Override
     public void addNeighbor(T factor) {
         neighbors.add(factor);
+        messages.put(factor, 0d);
     }
 
     @Override
@@ -104,14 +105,31 @@ public abstract class AbstractFactor<T> implements Factor<T> {
      * @return message received from the given neighbor.
      */
     public double getMessage(T neighbor) {
-        if (messages.containsKey(neighbor)) {
-            return messages.get(neighbor);
+        if (!messages.containsKey(neighbor)) {
+            throw new RuntimeException("I don't have a message from neighbor " + neighbor);
         }
-        return 0;
+        return messages.get(neighbor);
+    }
+
+    /**
+     * Run an iteration of the factor.
+     * 
+     * @return
+     */
+    protected abstract long iter();
+
+    @Override
+    public final long run() {
+        long ccs = iter();
+        messages.clear();
+        return ccs;
     }
 
     @Override
     public void receive(double message, T sender) {
+        if (!neighbors.contains(sender)) {
+            throw new RuntimeException("I (" + getClass().getName() + ", " + getIdentity() + ") received a message from the non-neighbor sender " + sender);
+        }
         messages.put(sender, message);
     }
 

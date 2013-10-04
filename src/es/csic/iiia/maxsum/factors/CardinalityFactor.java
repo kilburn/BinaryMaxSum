@@ -74,7 +74,7 @@ public class CardinalityFactor<T> extends AbstractFactor<T> {
     }
 
     @Override
-    public long run() {
+    public long iter() {
         constraintChecks = 0;
         final MaxOperator operator = getMaxOperator();
         final int size = getNeighbors().size();

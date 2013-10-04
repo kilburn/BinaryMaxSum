@@ -98,7 +98,7 @@ public class IndependentFactor<T> extends AbstractFactor<T> {
      * of its neighbors out.
      */
     @Override
-    public long run() {
+    public long iter() {
         for (T neighbor : getNeighbors()) {
             send(getPotential(neighbor), neighbor);
         }
