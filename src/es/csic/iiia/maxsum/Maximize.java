@@ -44,6 +44,11 @@ package es.csic.iiia.maxsum;
 public class Maximize implements MaxOperator {
 
     @Override
+    public MaxOperator inverse() {
+        return new Minimize();
+    }
+
+    @Override
     public double max(double value1, double value2) {
         return Math.max(value1, value2);
     }

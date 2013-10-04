@@ -36,7 +36,6 @@
  */
 package es.csic.iiia.maxsum.factors;
 
-import es.csic.iiia.maxsum.factors.cardinality.CardinalityFunction;
 import es.csic.iiia.maxsum.CommunicationAdapter;
 import es.csic.iiia.maxsum.MaxOperator;
 import es.csic.iiia.maxsum.Maximize;
@@ -49,55 +48,47 @@ import org.junit.Test;
  *
  * @author Marc Pujol <mpujol@iiia.csic.es>
  */
-public class CardinalityFactorTest {
+public class AllActiveIncentiveFactorTest {
 
     private final double DELTA = 0.0001d;
 
     @Test
     public void testRun1() {
-        double[] values  = new double[]{0, 1, 2};
-        double[] results = new double[]{-1, 0, 0};
-        run(new Minimize(), values, results);
+        double[] values  = new double[]{10, -5};
+        double[] results = new double[]{5, 0};
+        run(new Minimize(), 20, values, results);
 
-        results = new double[]{-2, -2, -1};
-        run(new Maximize(), values, results);
+        results = new double[]{15, 20};
+        run(new Maximize(), 20, values, results);
     }
 
     @Test
     public void testRun2() {
-        double[] values  = new double[]{0, 0, 2};
-        double[] results = new double[]{0, 0, 0};
-        run(new Minimize(), values, results);
+        double[] values  = new double[]{-2, -5, -7};
+        double[] results = new double[]{5, 2, 2};
+        run(new Minimize(), 20, values, results);
 
-        results = new double[]{-2, -2, 0};
-        run(new Maximize(), values, results);
+        results = new double[]{8, 11, 13};
+        run(new Maximize(), 20, values, results);
     }
 
     @Test
     public void testRun3() {
-        double[] values  = new double[]{-1, 2};
-        double[] results = new double[]{-2, 1};
-        run(new Minimize(), values, results);
+        double[] values  = new double[]{5, 5, 7};
+        double[] results = new double[]{-8, -8, -10};
+        run(new Minimize(), -20, values, results);
 
-        results = new double[]{-2, 1};
-        run(new Maximize(), values, results);
+        results = new double[]{-5, -5, -5};
+        run(new Maximize(), -20, values, results);
     }
 
-    private void run(final MaxOperator op, double[] values, double[] results) {
+    private void run(MaxOperator op, double incentive, double[] values, double[] results) {
         CommunicationAdapter com = mock(CommunicationAdapter.class);
 
         // Setup incoming messages
         CardinalityFactor[] cfs = new CardinalityFactor[values.length];
-        CardinalityFactor s = new CardinalityFactor();
-        s.setFunction(new CardinalityFunction() {
-            @Override
-            public double getCost(int nActiveVariables) {
-                if (nActiveVariables != 1) {
-                    return op.getWorstValue();
-                }
-                return 0;
-            }
-        });
+        AllActiveIncentiveFactor s = new AllActiveIncentiveFactor();
+        s.setIncentive(incentive);
         s.setCommunicationAdapter(com);
         s.setMaxOperator(op);
         s.setIdentity(s);

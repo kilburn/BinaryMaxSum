@@ -44,6 +44,15 @@ package es.csic.iiia.maxsum;
 public interface MaxOperator {
 
     /**
+     * Return the inverse of this max operator.
+     * <p/>
+     * For instance, the <em>maximum</em> operator would return the <em>minimum</em> operator.
+     *
+     * @return inverse of this max operator.
+     */
+    public MaxOperator inverse();
+
+    /**
      * Operates two values, returning the better one according to this operator
      *
      * @param value1 first value

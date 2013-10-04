@@ -38,7 +38,6 @@ package es.csic.iiia.maxsum.factors;
 
 import es.csic.iiia.maxsum.util.BestValuesTracker;
 import es.csic.iiia.maxsum.MaxOperator;
-import es.csic.iiia.maxsum.factors.AbstractFactor;
 
 /**
  * Max-sum "at most one" factor.
@@ -48,12 +47,12 @@ import es.csic.iiia.maxsum.factors.AbstractFactor;
  * <p/>
  * Outgoing messages are computed in <em>O(n)</em> time, where <em>n</em> is the
  * total number of variables connected to this factor.
- * 
+ *
  * @author Marc Pujol <mpujol@iiia.csic.es>
  */
 public class AtMostOneFactor<T> extends AbstractFactor<T> {
 
-    private BestValuesTracker<T> tracker; 
+    private BestValuesTracker<T> tracker;
 
     @Override
     public void setMaxOperator(MaxOperator maxOperator) {
@@ -68,14 +67,14 @@ public class AtMostOneFactor<T> extends AbstractFactor<T> {
         for (T f : getNeighbors()) {
             tracker.track(f, getMessage(f));
         }
-        
+
         // Send messages
         for (T f : getNeighbors()) {
             final double value = - getMaxOperator().max(
                     0, tracker.getComplementary(f));
             send(value, f);
         }
-        
+
         return getNeighbors().size()*2;
     }
 
