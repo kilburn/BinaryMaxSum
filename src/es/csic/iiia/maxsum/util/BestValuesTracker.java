@@ -53,12 +53,20 @@ public class BestValuesTracker<T> {
     private final Object[] objects;
     private int count = 0;
 
+    /**
+     * Build a new tracker of best values.
+     *
+     * @param operator maximization operator to use.
+     */
     public BestValuesTracker(MaxOperator operator) {
         values = new double[2];
         objects = new Object[2];
         this.operator = operator;
     }
 
+    /**
+     * Cleanup all values tracked until now.
+     */
     public void reset() {
         LOG.finest("Tracking start");
         values[0] = values[1] = operator.getWorstValue();
@@ -66,40 +74,64 @@ public class BestValuesTracker<T> {
         count = 0;
     }
 
-    public double getComplementary(T t) {
+    /**
+     * Get the best value among tracked elements which are *not* the given one.
+     *
+     * @param element element to exclude from the maximization.
+     * @return value of the best element which is *not* the given one.
+     */
+    public double getComplementary(T element) {
         if (count == 0) {
             return 0;
         }
 
-        if (t == objects[0]) {
+        if (element == objects[0]) {
             return count == 1 ? 0 : values[1];
         }
 
         return count > 0 ? values[0] : 0;
     }
 
+    /**
+     * Get the element with a best value between all tracked ones.
+     *
+     * @return element with best value.
+     */
     public T getBest() {
         return (T)objects[0];
     }
 
+    /**
+     * Get the value of the best element between all tracked ones. Alternatively, this is the
+     * maximum (according to our operator) between all tracked values.
+     *
+     * @see MaxOperator
+     * @return best value (maximum) between all tracked ones.
+     */
     public double getBestValue() {
         return values[0];
     }
 
-    public void track(T t, double value) {
+    /**
+     * Track an element and its associated value.
+     *
+     * @param element element to track.
+     * @param value value of this element.
+     */
+    public void track(T element, double value) {
         count++;
 
         LOG.log(Level.FINEST, "BestValues tracking {0}", value);
 
         if (operator.max(value, values[0]) == value) {
             values[1]  = values[0];     values[0]  = value;
-            objects[1] = objects[0];    objects[0] = t;
+            objects[1] = objects[0];    objects[0] = element;
             return;
         }
 
         if (operator.max(value, values[1]) == value) {
             values[1]  = value;
-            objects[1] = t;
+            objects[1] = element;
         }
 
     }

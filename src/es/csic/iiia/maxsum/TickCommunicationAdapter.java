@@ -36,7 +36,6 @@
  */
 package es.csic.iiia.maxsum;
 
-import es.csic.iiia.maxsum.Factor;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -46,14 +45,14 @@ import java.util.logging.Logger;
  * <p/>
  * This adapter buffers all the messages being sent, and only delivers them
  * when it is ticked. This makes it very easy to implement lock-stepped max-sum,
- * provided that you do *not* need to send the messages through a simulated 
+ * provided that you do *not* need to send the messages through a simulated
  * network and/or tamper with them in any way.
- * 
+ *
  * @author Marc Pujol <mpujol@iiia.csic.es>
  */
 public class TickCommunicationAdapter<T extends Factor> implements CommunicationAdapter<Factor> {
     private static final Logger LOG = Logger.getLogger(TickCommunicationAdapter.class.getName());
-    
+
     private ArrayList<Message> buffer = new ArrayList<Message>();
 
     @Override
@@ -61,7 +60,7 @@ public class TickCommunicationAdapter<T extends Factor> implements Communication
         LOG.log(Level.FINEST, "Message from {0} to {1} : {2}", new Object[]{sender, recipient, message});
         buffer.add(new Message(message, sender, recipient));
     }
-    
+
     /**
      * Messages are buffered until the channel is ticked, when it delivers all
      * of the messages sent since the last tick.
@@ -71,7 +70,7 @@ public class TickCommunicationAdapter<T extends Factor> implements Communication
             m.recipient.receive(m.value, m.sender);
         }
     }
-    
+
     /**
      * This is just a holder of typed values. Nothing special about it.
      */
@@ -85,5 +84,5 @@ public class TickCommunicationAdapter<T extends Factor> implements Communication
             this.recipient = recipient;
         }
     }
-    
+
 }

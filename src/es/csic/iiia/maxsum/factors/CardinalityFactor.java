@@ -45,11 +45,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Maxsum workload factor with integrated independent costs.
- * <p/>
- * This factor is the combination of an independent cost evaluation for each of
- * the connected variables, plus an extra cost defined by a
- * {@link WorkloadFunction}.
+ * Maxsum cardinality factor.
  * <p/>
  * Outgoing messages are computed in <em>O(n*log(n))</em> time, where <em>n</em>
  * is the number of variables connected to this factor.
