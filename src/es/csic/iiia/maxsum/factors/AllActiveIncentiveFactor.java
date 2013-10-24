@@ -42,12 +42,22 @@ import es.csic.iiia.maxsum.util.BestValuesTracker;
 /**
  * A factor that (de)incentivizes a group of variables (from being) to be all on.
  *
+ * The messages are computed in O(n) time using the following derivation:
+ * <pre>
+ *      \nu_{f->x_i} = max[ min(0, -v_i^*), \alpha + v_i^- ],
+ * where
+ *      v_i^* = min_{j | j != i} v_j
+ * and
+ *      v_i^- = \sum_{j | j != i and v_j < 0} v_j =
+ *            = v^- - min(v_i, 0) ,
+ *      v^- = \sum_{j} min(v_j, 0)
+ * </pre>
+ *
  * @author Marc Pujol <mpujol@iiia.csic.es>
  */
 public class AllActiveIncentiveFactor<T> extends AbstractFactor<T> {
 
     private double incentive;
-
     private BestValuesTracker<T> worstValuesTracker;
 
     /**
@@ -70,54 +80,29 @@ public class AllActiveIncentiveFactor<T> extends AbstractFactor<T> {
     @Override
     public void setMaxOperator(MaxOperator maxOperator) {
         super.setMaxOperator(maxOperator);
-
         worstValuesTracker = new BestValuesTracker<T>(maxOperator.inverse());
     }
 
-
-
-    /**
-     * Runs an iteration of this factor, computing and sending messages to all neighbors.
-     *
-     * The messages are computed using the following derivation:
-     *
-     * \nu_{f->x_i} = max(0, incentive + \sum_{j \in N; j \neq i} [ \nu_{x_j->f} ] -
-     *                \sum_{j \in N; j \neq i} [ max(\nu_{x_j->f}, 0) ]
-     *
-     * @return number of Constraint Checks performed by this node.
-     */
     @Override
     public long iter() {
-
-        double fullSum = 0;
-        double onlyGoodsSum = 0;
+        final MaxOperator max = getMaxOperator();
+        final MaxOperator min = getMaxOperator().inverse();
         worstValuesTracker.reset();
 
+        double v_negative = 0;
         for (T neighbor : getNeighbors()) {
             final double message = getMessage(neighbor);
-            fullSum += message;
-            onlyGoodsSum += getMaxOperator().max(0, message);
             worstValuesTracker.track(neighbor, message);
+            v_negative += min.max(0, message);
         }
 
         for (T neighbor : getNeighbors()) {
             final double inMessage = getMessage(neighbor);
 
-            // all = \sum_{j \in N; j \neq i} [ \nu_{x_j->f} ]
-            //     = \sum_{j \in N} [ \nu_{x_j->f} ] - \nu_{x_i->f}
-            double all = fullSum - inMessage;
+            final double v_i_star = worstValuesTracker.getComplementary(neighbor);
+            final double v_i_negative = v_negative - min.max(0, inMessage);
 
-            // positives = \sum_{j \in N; j \neq i} [ max(\nu_{x_j->f}, 0) ]
-            //           = \sum_{j \in N} [ max(\nu_{x_j->f}, 0) ] - max(\nu_{x_i->f},0)
-            double goods = onlyGoodsSum - getMaxOperator().max(0, inMessage);
-
-            double goodsMinusOne = goods;
-            if (goods == all) {
-                goodsMinusOne -= worstValuesTracker.getComplementary(neighbor);
-            }
-
-            final double message = getMaxOperator().max(goodsMinusOne, incentive + all)
-                    - goods;
+            final double message = max.max(min.max(0, -v_i_star), incentive + v_i_negative);
             send(message, neighbor);
         }
 
