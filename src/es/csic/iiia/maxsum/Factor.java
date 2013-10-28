@@ -36,7 +36,6 @@
  */
 package es.csic.iiia.maxsum;
 
-import es.csic.iiia.maxsum.MaxOperator;
 import java.util.List;
 
 /**
@@ -45,24 +44,24 @@ import java.util.List;
  * @author Marc Pujol <mpujol@iiia.csic.es>
  */
 public interface Factor<T extends Object> {
-    
+
     /**
      * Sets the identity of this factor.
-     * 
+     *
      * @param identity object represented by this factor.
      */
     public void setIdentity(T identity);
-    
+
     /**
      * Get the identity of this factor.
-     * 
+     *
      * @return identity of this factor.
      */
     public T getIdentity();
-    
+
     /**
      * Get the <em>max</em> operator used by this factor.
-     * 
+     *
      * @return <em>max</em> operator used by this factor.
      */
     public MaxOperator getMaxOperator();
@@ -71,17 +70,17 @@ public interface Factor<T extends Object> {
      * Set the maximization operator used by this factor.
      */
     public void setMaxOperator(MaxOperator maxOperator);
-    
+
     /**
      * Set the communication adapter used by this factor.
-     * 
+     *
      * @param manager communication adapter to use.
      */
     public void setCommunicationAdapter(CommunicationAdapter<T> manager);
-    
+
     /**
      * Get the communication adapter used by this factor.
-     * 
+     *
      * @return communication adapter used by this factor.
      */
     public CommunicationAdapter<T> getCommunicationAdapter();
@@ -118,7 +117,7 @@ public interface Factor<T extends Object> {
 
     /**
      * Run the this factor (process incoming messages and send out new ones).
-     * 
+     *
      * @return number of Constraint Checks performed by this node.
      */
     public long run();

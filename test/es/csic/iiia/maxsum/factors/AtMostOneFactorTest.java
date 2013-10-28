@@ -40,7 +40,6 @@ import es.csic.iiia.maxsum.CommunicationAdapter;
 import es.csic.iiia.maxsum.MaxOperator;
 import es.csic.iiia.maxsum.Maximize;
 import es.csic.iiia.maxsum.Minimize;
-import es.csic.iiia.maxsum.factors.CardinalityFactor;
 import static org.mockito.Mockito.*;
 import static org.mockito.AdditionalMatchers.eq;
 import static org.junit.Assert.*;
@@ -59,7 +58,7 @@ public class AtMostOneFactorTest {
         double[] values  = new double[]{0, 1, 2};
         double[] results = new double[]{0, 0, 0};
         run(new Minimize(), values, results, 0);
-        
+
         results = new double[]{-2, -2, -1};
         run(new Maximize(), values, results, 2);
     }
@@ -69,7 +68,7 @@ public class AtMostOneFactorTest {
         double[] values  = new double[]{0, 0, 2};
         double[] results = new double[]{0, 0, 0};
         run(new Minimize(), values, results, 1);
-        
+
         results = new double[]{-2, -2, 0};
         run(new Maximize(), values, results, 2);
     }
@@ -79,7 +78,7 @@ public class AtMostOneFactorTest {
         double[] values  = new double[]{-1, 2};
         double[] results = new double[]{0, 1};
         run(new Minimize(), values, results, 0);
-        
+
         results = new double[]{-2, 0};
         run(new Maximize(), values, results, 1);
     }
@@ -98,7 +97,7 @@ public class AtMostOneFactorTest {
             int choice)
     {
         CommunicationAdapter com = mock(CommunicationAdapter.class);
-        
+
         // Setup incoming messages
         CardinalityFactor[] cfs = new CardinalityFactor[values.length];
         AtMostOneFactor s = new AtMostOneFactor();
@@ -106,7 +105,7 @@ public class AtMostOneFactorTest {
         s.setMaxOperator(op);
         s.setIdentity(s);
 
-        
+
         for (int i=0; i<cfs.length; i++) {
             cfs[i] = new CardinalityFactor();
             s.addNeighbor(cfs[i]);
