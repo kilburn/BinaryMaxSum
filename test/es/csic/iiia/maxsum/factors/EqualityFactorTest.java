@@ -36,83 +36,23 @@
  */
 package es.csic.iiia.maxsum.factors;
 
-import es.csic.iiia.maxsum.CommunicationAdapter;
 import es.csic.iiia.maxsum.Factor;
 import es.csic.iiia.maxsum.MaxOperator;
-import es.csic.iiia.maxsum.Maximize;
-import es.csic.iiia.maxsum.Minimize;
 import java.util.Arrays;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.*;
-import static org.mockito.AdditionalMatchers.eq;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
+ * Tests the {@link EqualityFactor} HOP by checking the computed messages against those computed
+ * by a {@link StandardFactor}.
  *
  * @author Marc Pujol <mpujol@iiia.csic.es>
  */
-public class SelectorFactorTest extends CrossFactorTestAbstract {
-
-    private final double DELTA = 0.0001d;
-
-    @Test
-    public void testRun1() {
-        double[] values  = new double[]{0, 1, 2};
-        double[] results = new double[]{-1, 0, 0};
-        run(new Minimize(), values, results, 0);
-
-        results = new double[]{-2, -2, -1};
-        run(new Maximize(), values, results, 2);
-    }
-
-    @Test
-    public void testRun2() {
-        double[] values  = new double[]{0, 0, 2};
-        double[] results = new double[]{0, 0, 0};
-        run(new Minimize(), values, results, 1);
-
-        results = new double[]{-2, -2, 0};
-        run(new Maximize(), values, results, 2);
-    }
-
-    @Test
-    public void testRun3() {
-        double[] values  = new double[]{-1, 2};
-        double[] results = new double[]{-2, 1};
-        run(new Minimize(), values, results, 0);
-
-        results = new double[]{-2, 1};
-        run(new Maximize(), values, results, 1);
-    }
-
-    private void run(MaxOperator op, double[] values, double[] results,
-            int choice)
-    {
-        CommunicationAdapter com = mock(CommunicationAdapter.class);
-
-        // Setup incoming messages
-        CardinalityFactor[] cfs = new CardinalityFactor[values.length];
-        SelectorFactor s = new SelectorFactor();
-        s.setCommunicationAdapter(com);
-        s.setMaxOperator(op);
-        s.setIdentity(s);
-
-        for (int i=0; i<cfs.length; i++) {
-            cfs[i] = new CardinalityFactor();
-            s.addNeighbor(cfs[i]);
-            s.receive(values[i], cfs[i]);
-        }
-        Object expectedChoice = cfs[choice];
-
-        // This makes the factor run and send messages through the mocked com
-        s.run();
-
-        for (int i=0; i<cfs.length; i++) {
-            verify(com).send(eq(results[i], DELTA), same(s), same(cfs[i]));
-        }
-
-        assertEquals(expectedChoice, s.select());
-    }
+public class EqualityFactorTest extends CrossFactorTestAbstract {
 
     @Override
     public Factor[] buildFactors(MaxOperator op, Factor[] neighbors) {
@@ -123,7 +63,7 @@ public class SelectorFactorTest extends CrossFactorTestAbstract {
     }
 
     private Factor buildSpecificFactor(MaxOperator op, Factor[] neighbors) {
-        SelectorFactor factor = new SelectorFactor();
+        EqualityFactor factor = new EqualityFactor();
         factor.setMaxOperator(op);
         link(factor, neighbors);
         return factor;
@@ -144,12 +84,9 @@ public class SelectorFactorTest extends CrossFactorTestAbstract {
         double[] values = new double[1 << nNeighbors];
         Arrays.fill(values, op.getWorstValue());
 
-        // Now set the rows with exactly one variable active to "0"
-        int idx = 1;
-        for (int i=0; i<nNeighbors; i++) {
-            values[idx] = 0;
-            idx = idx << 1;
-        }
+        // Now set the rows with either no or all variables active to "0"
+        values[0] = 0;
+        values[values.length-1] = 0;
 
         return values;
     }

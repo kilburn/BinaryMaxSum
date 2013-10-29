@@ -45,6 +45,7 @@ import es.csic.iiia.maxsum.MaxOperator;
 import es.csic.iiia.maxsum.Maximize;
 import es.csic.iiia.maxsum.Minimize;
 import es.csic.iiia.maxsum.TickCommunicationAdapter;
+import java.util.Arrays;
 import java.util.logging.Logger;
 import static org.mockito.Mockito.*;
 import static org.mockito.AdditionalMatchers.eq;
@@ -55,7 +56,7 @@ import org.junit.Test;
  *
  * @author Marc Pujol <mpujol@iiia.csic.es>
  */
-public class CompositeIndependentFactorTest {
+public class CompositeIndependentFactorTest extends CrossFactorTestAbstract {
     private static final Logger LOG = Logger.getLogger(CompositeIndependentFactorTest.class.getName());
 
     private final double DELTA = 0.0001d;
@@ -188,5 +189,63 @@ public class CompositeIndependentFactorTest {
         for (int i=0; i<sfs.length; i++) {
             verify(com).send(eq(expected[i], DELTA), same(c), same(sfs[i]));
         }
+    }
+
+    @Override
+    public Factor[] buildFactors(final MaxOperator op, Factor[] neighbors) {
+        double[] independentPotentials = buildIndependentPotentials(neighbors.length);
+
+        return new Factor[]{
+            buildSpecificFactor(op, neighbors, independentPotentials),
+            buildStandardFactor(op, neighbors, independentPotentials),
+        };
+    }
+
+    private double[] buildIndependentPotentials(int nNeighbors) {
+        double[] values = new double[nNeighbors];
+        for (int i=0; i<nNeighbors; i++) {
+            values[i] = getRandomValue();
+        }
+        return values;
+    }
+
+    private Factor buildSpecificFactor(MaxOperator op, Factor[] neighbors, double[] independentPotentials) {
+        CompositeIndependentFactor factor = new CompositeIndependentFactor();
+        factor.setMaxOperator(op);
+        factor.setInnerFactor(new SelectorFactor());
+
+        IndependentFactor independent = new IndependentFactor();
+        link(factor, neighbors);
+        for (int i=0; i<neighbors.length; i++) {
+            independent.setPotential(neighbors[i], independentPotentials[i]);
+        }
+        factor.setIndependentFactor(independent);
+
+        return factor;
+    }
+
+    private Factor buildStandardFactor(MaxOperator op, Factor[] neighbors, double[] independentPotentials) {
+        StandardFactor factor = new StandardFactor();
+        factor.setMaxOperator(op);
+        link(factor, neighbors);
+        factor.setPotential(buildPotential(op, neighbors, independentPotentials));
+        return factor;
+    }
+
+    public double[] buildPotential(MaxOperator op, Factor[] neighbors, double[] independentPotentials) {
+        final int nNeighbors = neighbors.length;
+
+        // Initialize the cost/utilites array with "no goods"
+        double[] values = new double[1 << nNeighbors];
+        Arrays.fill(values, op.getWorstValue());
+
+        // Now set the rows with exactly one variable active to the corresponding potential
+        int idx = 1;
+        for (int i=0; i<nNeighbors; i++) {
+            values[idx] = independentPotentials[nNeighbors-1-i];
+            idx = idx << 1;
+        }
+
+        return values;
     }
 }

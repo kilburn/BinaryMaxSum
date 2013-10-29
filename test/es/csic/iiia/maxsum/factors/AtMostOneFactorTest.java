@@ -37,9 +37,11 @@
 package es.csic.iiia.maxsum.factors;
 
 import es.csic.iiia.maxsum.CommunicationAdapter;
+import es.csic.iiia.maxsum.Factor;
 import es.csic.iiia.maxsum.MaxOperator;
 import es.csic.iiia.maxsum.Maximize;
 import es.csic.iiia.maxsum.Minimize;
+import java.util.Arrays;
 import static org.mockito.Mockito.*;
 import static org.mockito.AdditionalMatchers.eq;
 import static org.junit.Assert.*;
@@ -49,7 +51,7 @@ import org.junit.Test;
  *
  * @author Marc Pujol <mpujol@iiia.csic.es>
  */
-public class AtMostOneFactorTest {
+public class AtMostOneFactorTest extends CrossFactorTestAbstract {
 
     private final double DELTA = 0.0001d;
 
@@ -122,4 +124,48 @@ public class AtMostOneFactorTest {
 
         assertEquals(expectedChoice, s.select());
     }
+
+    @Override
+    public Factor[] buildFactors(MaxOperator op, Factor[] neighbors) {
+        return new Factor[]{
+            buildSpecificFactor(op, neighbors),
+            buildStandardFactor(op, neighbors),
+        };
+    }
+
+    private Factor buildSpecificFactor(MaxOperator op, Factor[] neighbors) {
+        AtMostOneFactor factor = new AtMostOneFactor();
+        factor.setMaxOperator(op);
+        link(factor, neighbors);
+        return factor;
+    }
+
+    private Factor buildStandardFactor(MaxOperator op, Factor[] neighbors) {
+        StandardFactor factor = new StandardFactor();
+        factor.setMaxOperator(op);
+        link(factor, neighbors);
+        factor.setPotential(buildPotential(op, neighbors));
+        return factor;
+    }
+
+    public double[] buildPotential(MaxOperator op, Factor[] neighbors) {
+        final int nNeighbors = neighbors.length;
+
+        // Initialize the cost/utilites array with "no goods"
+        double[] values = new double[1 << nNeighbors];
+        Arrays.fill(values, op.getWorstValue());
+
+        // Allow all variables to be inactive, which is always the first configuration
+        values[0] = 0;
+
+        // Now set the rows with exactly one variable active to "0"
+        int idx = 1;
+        for (int i=0; i<nNeighbors; i++) {
+            values[idx] = 0;
+            idx = idx << 1;
+        }
+
+        return values;
+    }
+
 }

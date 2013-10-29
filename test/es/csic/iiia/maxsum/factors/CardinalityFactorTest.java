@@ -38,6 +38,7 @@ package es.csic.iiia.maxsum.factors;
 
 import es.csic.iiia.maxsum.factors.cardinality.CardinalityFunction;
 import es.csic.iiia.maxsum.CommunicationAdapter;
+import es.csic.iiia.maxsum.Factor;
 import es.csic.iiia.maxsum.MaxOperator;
 import es.csic.iiia.maxsum.Maximize;
 import es.csic.iiia.maxsum.Minimize;
@@ -46,10 +47,10 @@ import static org.mockito.AdditionalMatchers.eq;
 import org.junit.Test;
 
 /**
- *
+ * Tests the {@link CardinalityFactor} class.
  * @author Marc Pujol <mpujol@iiia.csic.es>
  */
-public class CardinalityFactorTest {
+public class CardinalityFactorTest extends CrossFactorTestAbstract {
 
     private final double DELTA = 0.0001d;
 
@@ -113,6 +114,65 @@ public class CardinalityFactorTest {
 
         for (int i=0; i<cfs.length; i++) {
             verify(com).send(eq(results[i], DELTA), same(s), same(cfs[i]));
+        }
+    }
+
+    @Override
+    public Factor[] buildFactors(final MaxOperator op, Factor[] neighbors) {
+        CardinalityFunction function = new RandomCardinalityFunction(neighbors.length);
+
+        return new Factor[]{
+            buildSpecificFactor(op, neighbors, function),
+            buildStandardFactor(op, neighbors, function),
+        };
+    }
+
+    private Factor buildSpecificFactor(MaxOperator op, Factor[] neighbors, CardinalityFunction function) {
+        CardinalityFactor factor = new CardinalityFactor();
+        factor.setMaxOperator(op);
+        link(factor, neighbors);
+        factor.setFunction(function);
+        return factor;
+    }
+
+    private Factor buildStandardFactor(MaxOperator op, Factor[] neighbors, CardinalityFunction function) {
+        StandardFactor factor = new StandardFactor();
+        factor.setMaxOperator(op);
+        link(factor, neighbors);
+        factor.setPotential(buildPotential(op, neighbors, function));
+        return factor;
+    }
+
+    private double[] buildPotential(MaxOperator op, Factor[] neighbors, CardinalityFunction function) {
+        final int nNeighbors = neighbors.length;
+        final int size = 1 << nNeighbors;
+        double[] values = new double[size];
+
+        for (int idx=0; idx<size; idx++) {
+            int nActiveVariables = Integer.bitCount(idx);
+            values[idx] = function.getCost(nActiveVariables);
+        }
+
+        return values;
+    }
+
+    /**
+     * Cardinality function that returns some (fixed) random number for every different number
+     * of active neighbors.
+     */
+    private class RandomCardinalityFunction implements CardinalityFunction {
+        private double[] values;
+
+        public RandomCardinalityFunction(int nNeighbors) {
+            values = new double[nNeighbors+1];
+            for (int i=0; i<nNeighbors+1; i++) {
+                values[i] = getRandomValue();
+            }
+        }
+
+        @Override
+        public double getCost(int nActiveVariables) {
+            return values[nActiveVariables];
         }
     }
 }

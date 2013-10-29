@@ -37,9 +37,11 @@
 package es.csic.iiia.maxsum.factors;
 
 import es.csic.iiia.maxsum.CommunicationAdapter;
+import es.csic.iiia.maxsum.Factor;
 import es.csic.iiia.maxsum.MaxOperator;
 import es.csic.iiia.maxsum.Maximize;
 import es.csic.iiia.maxsum.Minimize;
+import java.util.Arrays;
 import static org.mockito.Mockito.*;
 import static org.mockito.AdditionalMatchers.eq;
 import org.junit.Test;
@@ -48,7 +50,7 @@ import org.junit.Test;
  *
  * @author Marc Pujol <mpujol@iiia.csic.es>
  */
-public class AllActiveIncentiveFactorTest {
+public class AllActiveIncentiveFactorTest extends CrossFactorTestAbstract {
 
     private final double DELTA = 0.0001d;
 
@@ -106,4 +108,44 @@ public class AllActiveIncentiveFactorTest {
             verify(com).send(eq(results[i], DELTA), same(s), same(cfs[i]));
         }
     }
+
+    @Override
+    public Factor[] buildFactors(MaxOperator op, Factor[] neighbors) {
+        double incentive = getRandomValue();
+
+        return new Factor[]{
+            buildSpecificFactor(op, neighbors, incentive),
+            buildStandardFactor(op, neighbors, incentive),
+        };
+    }
+
+    private Factor buildSpecificFactor(MaxOperator op, Factor[] neighbors, double incentive) {
+        AllActiveIncentiveFactor factor = new AllActiveIncentiveFactor();
+        factor.setMaxOperator(op);
+        link(factor, neighbors);
+        factor.setIncentive(incentive);
+        return factor;
+    }
+
+    private Factor buildStandardFactor(MaxOperator op, Factor[] neighbors, double incentive) {
+        StandardFactor factor = new StandardFactor();
+        factor.setMaxOperator(op);
+        link(factor, neighbors);
+        factor.setPotential(buildPotential(op, neighbors, incentive));
+        return factor;
+    }
+
+    public double[] buildPotential(MaxOperator op, Factor[] neighbors, double incentive) {
+        final int nNeighbors = neighbors.length;
+
+        // Initialize the cost/utilites array with "no goods"
+        double[] values = new double[1 << nNeighbors];
+        Arrays.fill(values, 0);
+
+        // Incentivize the "all ones" configuration, which is always the last one
+        values[values.length-1] = incentive;
+
+        return values;
+    }
+
 }
