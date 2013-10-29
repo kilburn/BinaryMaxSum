@@ -81,15 +81,7 @@ public class BestValuesTracker<T> {
      * @return value of the best element which is *not* the given one.
      */
     public double getComplementary(T element) {
-        if (count == 0) {
-            return 0;
-        }
-
-        if (element == objects[0]) {
-            return count == 1 ? 0 : values[1];
-        }
-
-        return count > 0 ? values[0] : 0;
+        return element != objects[0] ? values[0] : values[1];
     }
 
     /**
