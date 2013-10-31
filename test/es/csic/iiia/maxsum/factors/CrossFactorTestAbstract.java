@@ -105,6 +105,7 @@ public abstract class CrossFactorTestAbstract {
             for (int j=0; j<len; j++) {
                 values[j] = generator.nextDouble();
             }
+
             runAgainstGeneric(new Maximize(), values);
             runAgainstGeneric(new Minimize(), values);
         }
@@ -160,7 +161,7 @@ public abstract class CrossFactorTestAbstract {
         List<Double> specificMessages = specificMessagesCaptor.getAllValues();
         List<Double> genericMessages = genericMessagesCaptor.getAllValues();
         for (int i=0; i<neighbors.length; i++) {
-            assertEquals(specificMessages.get(i), genericMessages.get(i), DELTA);
+            assertEquals(genericMessages.get(i), specificMessages.get(i), DELTA);
         }
 
     }
