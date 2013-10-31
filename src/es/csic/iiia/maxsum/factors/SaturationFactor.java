@@ -37,8 +37,6 @@
 package es.csic.iiia.maxsum.factors;
 
 import es.csic.iiia.maxsum.MaxOperator;
-import es.csic.iiia.maxsum.Maximize;
-import es.csic.iiia.maxsum.Minimize;
 import es.csic.iiia.maxsum.util.BestValuesTracker;
 import java.util.HashMap;
 import java.util.Map;
@@ -52,9 +50,38 @@ import java.util.Map;
  * sequence of corresponding weights <em>B = {b_1, ..., b_n}, b_i > 0</ëm>. Then, the factor is
  * defined as
  * <pre>
- *      f(X,B) = max_{i=1..n} b_i*x_i
+ *      f(X,B) = max_{i=1..n | x_i=1} b_i*x_i
  * </pre>
  *
+ * Messages are computed in O(n) time by using the derivation:
+ * <pre>
+ *      v_{f->x_i} = max(b_i, b*_i) - max(-v*_i, b*_i)
+ * </pre>
+ * which is a simplification of the message
+ * <pre>
+ *      \mu_{f->x_i}(0) = max( 0, v*_i + b*_i )
+ *      \mu_{f->x_i}(1) = v*_i + max( b_i, b*_i )
+ * </pre>
+ * where
+ * <pre>
+ *      b*   = max_i[ b_i + min(v_i, 0) ] ,
+ *      i*   = argmax_i[ b_i + min(v_i, 0) ] ,
+ *      b**  = max_{i != i*}[ b_i + min(v_i, 0) ] ,
+ *      b*_i = b** if i=i*, b* otherwise ,
+ *      v*   = \sum max(v_i, 0) ,
+ *      v*_i = v* - max(v_i, 0) ,
+ * </pre>
+ *
+ * Intuitively,
+ * <ul>
+ * <li>{@code b*} is the max b value that can be achieved (penalized if the
+ * corresponding  message is negative)</li>
+ * <li>{@code i*} is the index of that best b value</li>
+ * <li>{@code b**} is the second best b value (penalized if needed)</li>
+ * <li>{@code b*_i} is the best (penalized) b value excluding neighbor {@code i}</li>
+ * <li>{@code v*} is the sum of all positive messages
+ * <li>{@code v*_i} is the sum of all positive messages excluding the one from neighbor {@code i}</li>
+ * </ul>
  *
  * @author Marc Pujol <mpujol@iiia.csic.es>
  */
@@ -62,9 +89,13 @@ public class SaturationFactor<T> extends AbstractFactor<T> {
 
     private Map<T, Double> potential = new HashMap<T, Double>();
 
+    /** Tracks the maximum gain from the max(b_i) part */
+    private BestValuesTracker<T> max_b;
+
     @Override
     public void setMaxOperator(MaxOperator maxOperator) {
         super.setMaxOperator(maxOperator);
+        max_b = new BestValuesTracker<T>(maxOperator);
     }
 
     /**
@@ -110,41 +141,34 @@ public class SaturationFactor<T> extends AbstractFactor<T> {
 
     @Override
     protected long iter() {
-
-        for (T neighbor : getNeighbors()) {
-            sendMessage(neighbor);
-        }
-
-        return 0;
-    }
-
-    private void sendMessage(T neighborToSendTo) {
         final MaxOperator max = getMaxOperator();
 
-        double M_i_positive = max.getWorstValue();
-        double M_i_negative = max.getWorstValue();
-
-        double sum_positive = 0;
-
+        double v_positive = 0;
+        max_b.reset();
         for (T neighbor : getNeighbors()) {
-            // Skip the neighbor to which the message will be sent
-            if (neighbor == neighborToSendTo) continue;
+            final double v_i = getMessage(neighbor);
+            final double b_i = getPotential(neighbor);
 
-            final double v_j = getMessage(neighbor);
-            final double b_j = getPotential(neighbor);
-            sum_positive += max.max(v_j, 0);
-
-            if (max.compare(v_j, 0) >= 0) {
-                M_i_positive = max.max(M_i_positive, b_j);
+            v_positive += max.max(v_i, 0);
+            if (max.compare(v_i, 0) >= 0) {
+                max_b.track(neighbor, b_i);
             } else {
-                M_i_negative = max.max(M_i_negative, b_j + v_j);
+                max_b.track(neighbor, b_i + v_i);
             }
         }
 
-        final double b_i = getPotential(neighborToSendTo);
-        final double mu_0 = max.max(0, sum_positive + max.max(M_i_positive, M_i_negative));
-        final double mu_1 = sum_positive + max.max(b_i, max.max(M_i_positive, M_i_negative));
-        send(mu_1 - mu_0, neighborToSendTo);
+        for (T neighbor : getNeighbors()) {
+            final double v_i = getMessage(neighbor);
+            final double b_i = getPotential(neighbor);
+
+            final double max_b_i = max_b.getComplementary(neighbor);
+            final double v_positive_i = v_positive - max.max(v_i, 0);
+
+            final double value = max.max(b_i, max_b_i) - max.max(-v_positive_i, max_b_i);
+            send(value, neighbor);
+        }
+
+        return 2*getNeighbors().size();
     }
 
 }
