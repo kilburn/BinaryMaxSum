@@ -41,8 +41,11 @@ import es.csic.iiia.maxsum.Factor;
 import es.csic.iiia.maxsum.MaxOperator;
 import es.csic.iiia.maxsum.Maximize;
 import es.csic.iiia.maxsum.Minimize;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -56,8 +59,18 @@ import org.mockito.ArgumentCaptor;
  * @author Marc Pujol <mpujol@iiia.csic.es>
  */
 public abstract class CrossFactorTestAbstract {
+    private static final Logger LOG = Logger.getLogger(CrossFactorTestAbstract.class.getName());
+
+    /** Allowed computational error when comparing results */
     private final double DELTA = 0.0001d;
-    private final int NUMBER_OF_RUNS = 100;
+
+    /** Number of tests to perform */
+    private final int NUMBER_OF_RUNS = 1000;
+
+    /** Maximum number of neighbors (variables) of the tested factors */
+    private final int MAX_NEIGHBORS = 10;
+
+    /** Generator of random values */
     private Random generator = new Random();
 
     /**
@@ -89,7 +102,7 @@ public abstract class CrossFactorTestAbstract {
     }
 
     /**
-     * Generates and returns a random value in [-1, 1) the range.
+     * Generates and returns a random value in the [-1, 1) range.
      *
      * @return random cost/utility
      */
@@ -97,14 +110,25 @@ public abstract class CrossFactorTestAbstract {
         return generator.nextDouble()*2 - 1;
     }
 
+    /**
+     * Generates and returns a random integer in the [0, n) range.
+     *
+     * @param n maximum integer (exclusive)
+     * @return random integer
+     */
+    protected int getRandomIntValue(int n) {
+        return generator.nextInt(n);
+    }
+
     @Test
     public void crossTest() {
         for (int i=0; i<NUMBER_OF_RUNS; i++) {
-            int len = generator.nextInt(10) + 1;
+            int len = getRandomIntValue(MAX_NEIGHBORS) + 1;
             double[] values = new double[len];
             for (int j=0; j<len; j++) {
                 values[j] = generator.nextDouble();
             }
+            LOG.log(Level.FINEST, "Messages: {0}", Arrays.toString(values));
 
             runAgainstGeneric(new Maximize(), values);
             runAgainstGeneric(new Minimize(), values);
