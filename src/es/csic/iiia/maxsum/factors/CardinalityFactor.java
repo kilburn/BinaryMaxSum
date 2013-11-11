@@ -156,10 +156,9 @@ public class CardinalityFactor<T> extends AbstractFactor<T> {
                 msg0 = operator.max(msg0, m0L[pos-1]);
                 msg1 = operator.max(msg1, m1[pos-1]);
             }
-            if (pos<size) {
-                msg0 = operator.max(msg0, m_1[pos+1] - vals_and_indices.get(pos).cost);
-                msg1 = operator.max(msg1, m0R[pos+1] - vals_and_indices.get(pos).cost);
-            }
+
+            msg0 = operator.max(msg0, m_1[pos+1] - vals_and_indices.get(pos).cost);
+            msg1 = operator.max(msg1, m0R[pos+1] - vals_and_indices.get(pos).cost);
 
             final T f = vals_and_indices.get(pos).factor;
             LOG.log(Level.FINE, "Msg1: {0}, Msg0:{1}", new Object[]{msg1, msg0});
