@@ -103,7 +103,7 @@ public interface Factor<T extends Object> {
      * Receive a message.
      *
      * @param message message to receive
-     * @param sender sendor of the message
+     * @param sender sender of the message
      */
     public void receive(double message, T sender);
 

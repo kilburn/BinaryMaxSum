@@ -89,7 +89,8 @@ public class BestValuesTracker<T> {
      *
      * @return element with best value.
      */
-    public T getBest() {
+    @SuppressWarnings("unchecked")
+	public T getBest() {
         return (T)objects[0];
     }
 
