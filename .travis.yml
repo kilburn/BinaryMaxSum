@@ -1,0 +1,6 @@
+language: java
+install: ant jar
+jdk:
+    - openjdk7
+    - oraclejdk7
+    - openjdk6
