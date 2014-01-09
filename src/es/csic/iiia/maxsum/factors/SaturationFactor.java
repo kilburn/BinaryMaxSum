@@ -85,9 +85,7 @@ import java.util.Map;
  *
  * @author Marc Pujol <mpujol@iiia.csic.es>
  */
-public class SaturationFactor<T> extends AbstractFactor<T> {
-
-    private Map<T, Double> potential = new HashMap<T, Double>();
+public class SaturationFactor<T> extends IndependentFactor<T> {
 
     /** Tracks the maximum gain from the max(b_i) part */
     private BestValuesTracker<T> max_b;
@@ -96,47 +94,6 @@ public class SaturationFactor<T> extends AbstractFactor<T> {
     public void setMaxOperator(MaxOperator maxOperator) {
         super.setMaxOperator(maxOperator);
         max_b = new BestValuesTracker<T>(maxOperator);
-    }
-
-    /**
-     * Remove all potential costs.
-     */
-    public void clearPotentials() {
-        potential.clear();
-    }
-
-    /**
-     * Get the cost/utility of activating the variable shared with the given
-     * neighbor.
-     *
-     * @param neighbor neighbor to consider
-     * @return cost of activating the given neighbor
-     */
-    public double getPotential(T neighbor) {
-        if (!potential.containsKey(neighbor)) {
-            throw new IllegalArgumentException("Requested potential for a non-existant neighbor");
-        }
-        return potential.get(neighbor);
-    }
-
-    /**
-     * Remove the cost/utility associated to activating the given factor.
-     *
-     * @param f factor to consider
-     * @return previous cost of activating the given factor
-     */
-    public Double removePotential(T f) {
-        return potential.remove(f);
-    }
-
-    /**
-     * Set the cost/utility of activating the variable that corresponds to the given neighbor.
-     *
-     * @param neighbor neighbor with which this one shares a binary variable
-     * @param value cost/utility of activating this neighbor
-     */
-    public void setPotential(T factor, double value) {
-        potential.put(factor, value);
     }
 
     @Override

@@ -64,6 +64,9 @@ public interface MaxOperator {
     /**
      * Compares two values, returning -1 if the first is worst, 0 if they are equal, or 1 if the
      * first value is better.
+     * @param first first value to compare
+     * @param second second value to compare
+     * @return -1 if the first value is worst than the second, 0 if they are equal, or 1 otherwise.
      */
     public int compare(double first, double second);
 

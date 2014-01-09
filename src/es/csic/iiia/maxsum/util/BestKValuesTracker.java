@@ -45,6 +45,7 @@ import java.util.logging.Logger;
 /**
  * Utitlity class to compute the two best objects among a couple of them.
  *
+ * @param <T> Type of the elements to track.
  * @author Marc Pujol <mpujol@iiia.csic.es>
  */
 public class BestKValuesTracker<T> {
@@ -62,6 +63,7 @@ public class BestKValuesTracker<T> {
      * Build a new tracker of best values.
      *
      * @param operator maximization operator to use.
+     * @param k number of best values to extract.
      */
     public BestKValuesTracker(MaxOperator operator, int k) {
         this.k = k;
@@ -78,7 +80,7 @@ public class BestKValuesTracker<T> {
         precomputed = false;
     }
 
-    public void precompute() {
+    private void precompute() {
         sum = 0; Iterator<Entry> it = elements.iterator();
         for (int i=0; i<k && it.hasNext(); i++) {
             sum += it.next().value;
@@ -89,6 +91,22 @@ public class BestKValuesTracker<T> {
         precomputed = true;
     }
 
+    /**
+     * Computes the sum of the k best tracked costs, excluding the cost of the provided element and
+     * optionally including an extra (untracked) cost.
+     *
+     * If <code>extra</code> is not null, then this cost is treated as if it pertained to the
+     * list of costs to consider, but without modifying the list of tracked costs.
+     *
+     * If the given <code>element</code>'s cost is <strong>not</strong> within the best k costs,
+     * then the returned value is the sum of those best k costs. Otherwise, the result is the sum
+     * of the k+1 best costs minus the given element's cost.
+     *
+     * @param element element to exclude from the sum.
+     * @param value value of the excluded element.
+     * @param extra optional additional element to consider.
+     * @return sum of the best k costs, excluding the given element
+     */
     public double sumComplementaries(T element, double value, Double extra) {
         if (!precomputed) {
             precompute();
@@ -189,6 +207,7 @@ public class BestKValuesTracker<T> {
             if (getClass() != obj.getClass()) {
                 return false;
             }
+            @SuppressWarnings("unchecked")
             final Entry other = (Entry) obj;
             if (this.element != other.element && (this.element == null || !this.element.equals(other.element))) {
                 return false;

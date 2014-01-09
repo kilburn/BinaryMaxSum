@@ -48,19 +48,37 @@ import java.util.TreeSet;
  * This implementation also provides a constant-time {@code contains} method by using an auxiliar
  * hashset of the members.
  *
+ * @param <E> Type of the elements contained in this bounded set.
  * @author Marc Pujol <mpujol@iiia.csic.es>
  */
 public class BoundedTreeSet<E> extends TreeSet<E> {
+    private static final long serialVersionUID = 1L;
 
+    /**
+     * The (fixed) capacity of this bounded set.
+     */
     public final int capacity;
+
     private HashSet<E> members;
 
+    /**
+     * Build a new bounded set of the specified capacity.
+     *
+     * @param capacity maximum number of elements in this set.
+     */
     public BoundedTreeSet(int capacity) {
         super();
         members = new HashSet<E>(capacity);
         this.capacity = capacity;
     }
 
+    /**
+     * Build a new bounded set of the specified capacity, and fill it with the elements of the
+     * given collection.
+     *
+     * @param capacity maximum number of elements in this set.
+     * @param c collection of elements to pre-fill the set with.
+     */
     public BoundedTreeSet(int capacity, Collection<? extends E> c) {
         super();
         members = new HashSet<E>(capacity);
@@ -68,6 +86,14 @@ public class BoundedTreeSet<E> extends TreeSet<E> {
         addAll(c);
     }
 
+    /**
+     * Build a new bounded set of the specified capacity, where elements will be sorted in the order
+     * defined by the given comparator. The comparator also controls the eviction policy (worst
+     * values are evicted first).
+     *
+     * @param capacity maximum number of elements in this set.
+     * @param comparator comparator used to order the elements in this set.
+     */
     public BoundedTreeSet(int capacity, Comparator<? super E> comparator) {
         super(comparator);
         members = new HashSet<E>(capacity);

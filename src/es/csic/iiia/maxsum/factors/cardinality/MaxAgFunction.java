@@ -39,21 +39,22 @@ package es.csic.iiia.maxsum.factors.cardinality;
 /**
  * Workload function that enforces no more than <em>k</em> variables to be
  * active at the same time.
- * 
+ *
  * @author Marc Pujol <mpujol@iiia.csic.es>
  */
 public class MaxAgFunction implements CardinalityFunction {
-    
+
     private final int maxActiveVariables;
-    
+
     private double utility;
-    
+
     /**
      * Builds a new MaxAgFunction that prevents more than the given maximum
      * number of variables to be active at the same time, by introducing the
-     * specified amount of utility whenever the constraint is violated.
-     * 
-     * @param maxActiveVariables 
+     * specified amount of utility/cost whenever the constraint is violated.
+     *
+     * @param maxActiveVariables maximum number of active variables.
+     * @param utility amount of utility/cost to introduce.
      */
     public MaxAgFunction(int maxActiveVariables, double utility) {
         this.maxActiveVariables = maxActiveVariables;
@@ -62,7 +63,7 @@ public class MaxAgFunction implements CardinalityFunction {
 
     /**
      * Get the cost of activating the given number of variables.
-     * 
+     *
      * @param numActiveVariables number of variables to activate.
      * @return Infinity if the given number of variables is above the maximum
      * allowable, or 0 otherwise.
@@ -74,5 +75,5 @@ public class MaxAgFunction implements CardinalityFunction {
         }
         return 0;
     }
-    
+
 }

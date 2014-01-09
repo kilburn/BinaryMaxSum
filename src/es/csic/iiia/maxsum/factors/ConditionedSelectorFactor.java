@@ -38,7 +38,6 @@ package es.csic.iiia.maxsum.factors;
 
 import es.csic.iiia.maxsum.util.BestValuesTracker;
 import es.csic.iiia.maxsum.MaxOperator;
-import es.csic.iiia.maxsum.factors.AbstractFactor;
 
 /**
  * Max-sum conditioned selector factor.

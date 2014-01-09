@@ -59,11 +59,9 @@ import java.util.Map;
  *
  * @author Marc Pujol <mpujol@iiia.csic.es>
  */
-public class SaturationKFactor<T> extends AbstractFactor<T> {
+public class SaturationKFactor<T> extends IndependentFactor<T> {
 
     private final int k;
-
-    private Map<T, Double> potential = new HashMap<T, Double>();
 
     /** Tracks the maximum gain from the max(b_i) part */
     private BestKValuesTracker<T> max_b;
@@ -74,6 +72,12 @@ public class SaturationKFactor<T> extends AbstractFactor<T> {
     /** Tracks the sum of positive messages */
     private double sum;
 
+    /**
+     * Build a new saturation factor, that gains utility from at most <em>k</em> active neighbors.
+     *
+     * @param k maixmum number of neighbors that can contribute to this factor's utility (the
+     *          saturation threshold)
+     */
     public SaturationKFactor(int k) {
         this.k = k;
     }
@@ -87,46 +91,10 @@ public class SaturationKFactor<T> extends AbstractFactor<T> {
     }
 
     /**
-     * Remove all potential costs.
-     */
-    public void clearPotentials() {
-        potential.clear();
-    }
-
-    /**
-     * Get the cost/utility of activating the variable shared with the given
-     * neighbor.
+     * Maximum number of neighbors to select.
      *
-     * @param neighbor neighbor to consider
-     * @return cost of activating the given neighbor
+     * @return maximum number of neighbors to select (the <em>k</em> value)
      */
-    public double getPotential(T neighbor) {
-        if (!potential.containsKey(neighbor)) {
-            throw new IllegalArgumentException("Requested potential for a non-existant neighbor");
-        }
-        return potential.get(neighbor);
-    }
-
-    /**
-     * Remove the cost/utility associated to activating the given factor.
-     *
-     * @param f factor to consider
-     * @return previous cost of activating the given factor
-     */
-    public Double removePotential(T f) {
-        return potential.remove(f);
-    }
-
-    /**
-     * Set the cost/utility of activating the variable that corresponds to the given neighbor.
-     *
-     * @param neighbor neighbor with which this one shares a binary variable
-     * @param value cost/utility of activating this neighbor
-     */
-    public void setPotential(T factor, double value) {
-        potential.put(factor, value);
-    }
-
     public int getK() {
         return k;
     }

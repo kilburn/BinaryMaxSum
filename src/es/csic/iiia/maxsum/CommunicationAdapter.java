@@ -43,18 +43,20 @@ package es.csic.iiia.maxsum;
  * adapter. The implemented adapter should know how to send messages through
  * their simulator's simulated network.
  *
+ * @param <T> Identity type of the factors that communicate through this adapter.
+ * @see Factor#setIdentity(java.lang.Object)
  * @author Marc Pujol <mpujol@iiia.csic.es>
  */
 public interface CommunicationAdapter<T extends Object> {
-    
+
     /**
      * Sends a message from the given sender, intended for the specified
      * recipient.
-     * 
+     *
      * @param message message to be sent.
      * @param sender sender of the message.
      * @param recipient intended recipient.
      */
     public void send(double message, T sender, T recipient);
-    
+
 }

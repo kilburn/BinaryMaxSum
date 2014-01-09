@@ -43,6 +43,7 @@ import java.util.logging.Logger;
 /**
  * Utitlity class to compute the two best objects among a couple of them.
  *
+ * @param <T> Type of the objects to track.
  * @author Marc Pujol <mpujol@iiia.csic.es>
  */
 public class BestValuesTracker<T> {

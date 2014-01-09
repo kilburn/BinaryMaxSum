@@ -50,13 +50,13 @@ import java.util.logging.Logger;
  *
  * @author Marc Pujol <mpujol@iiia.csic.es>
  */
-public class TickCommunicationAdapter<T extends Factor<T>> implements CommunicationAdapter<T> {
+public class TickCommunicationAdapter implements CommunicationAdapter<Factor<Factor<?>>> {
     private static final Logger LOG = Logger.getLogger(TickCommunicationAdapter.class.getName());
 
     private ArrayList<Message> buffer = new ArrayList<Message>();
 
     @Override
-    public void send(double message, T sender, T recipient) {
+    public void send(double message, Factor<Factor<?>> sender, Factor<Factor<?>> recipient) {
         LOG.log(Level.FINEST, "Message from {0} to {1} : {2}", new Object[]{sender, recipient, message});
         buffer.add(new Message(message, sender, recipient));
     }
@@ -76,9 +76,9 @@ public class TickCommunicationAdapter<T extends Factor<T>> implements Communicat
      */
     private class Message {
         public final double value;
-        public final T sender;
-        public final T recipient;
-        public Message(double value, T sender, T recipient) {
+        public final Factor<Factor<?>> sender;
+        public final Factor<Factor<?>> recipient;
+        public Message(double value, Factor<Factor<?>> sender, Factor<Factor<?>> recipient) {
             this.value = value;
             this.sender = sender;
             this.recipient = recipient;

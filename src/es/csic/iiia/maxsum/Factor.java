@@ -41,6 +41,7 @@ import java.util.List;
 /**
  * Basic definition of a MaxSum factor.
  *
+ * @param <T> Type of the identity of this factor.
  * @author Marc Pujol <mpujol@iiia.csic.es>
  */
 public interface Factor<T extends Object> {
@@ -68,6 +69,7 @@ public interface Factor<T extends Object> {
 
     /**
      * Set the maximization operator used by this factor.
+     * @param maxOperator maximization operator to employ.
      */
     public void setMaxOperator(MaxOperator maxOperator);
 

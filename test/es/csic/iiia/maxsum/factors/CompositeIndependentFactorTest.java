@@ -91,7 +91,7 @@ public class CompositeIndependentFactorTest extends CrossFactorTestAbstract {
     public void testRunSelectorAndWorkload() {
         final int N_ITERATIONS = 10;
         MaxOperator operator = new Maximize();
-        TickCommunicationAdapter<Factor> com = new TickCommunicationAdapter<Factor>();
+        TickCommunicationAdapter com = new TickCommunicationAdapter();
         double[][] utilities = new double[][]{
             {0.017, 10.01},
             {0.1,   1.599},
@@ -103,9 +103,9 @@ public class CompositeIndependentFactorTest extends CrossFactorTestAbstract {
 
         // Create the carinality factors for each target
         CardinalityFunction f = new MaxAgFunction(1, Double.NEGATIVE_INFINITY);
-        CardinalityFactor[] cfs = new CardinalityFactor[nTargets];
+        CardinalityFactor[] cfs = new CardinalityFactor<?>[nTargets];
         for (int i = 0; i < nTargets; i++) {
-            cfs[i] = new CardinalityFactor<Factor>();
+            cfs[i] = new CardinalityFactor<Factor<?>>();
             cfs[i].setFunction(f);
             init(cfs[i], operator, com);
         }
@@ -115,8 +115,8 @@ public class CompositeIndependentFactorTest extends CrossFactorTestAbstract {
         CompositeIndependentFactor[] ifs = new CompositeIndependentFactor[nAgents];
         for (int agent = 0; agent < nAgents; agent++) {
             sfs[agent] = new SelectorFactor<Factor>();
-            IndependentFactor<Factor> pot = new IndependentFactor<Factor>();
-            ifs[agent] = new CompositeIndependentFactor();
+            IndependentFactor<Factor<?>> pot = new IndependentFactor<Factor<?>>();
+            ifs[agent] = new CompositeIndependentFactor<Factor<?>>();
             init(ifs[agent], operator, com);
             ifs[agent].setIndependentFactor(pot);
             ifs[agent].setInnerFactor(sfs[agent]);

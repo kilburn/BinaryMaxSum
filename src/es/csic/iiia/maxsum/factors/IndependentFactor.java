@@ -84,11 +84,11 @@ public class IndependentFactor<T> extends AbstractFactor<T> {
      * Set the independent cost of activating the variable that corresponds to
      * the given neighbor.
      *
-     * @param neighbor neighbor with which this one shares a binary variable
+     * @param neighbo
      * @param value cost/utility of activating this neighbor
      */
-    public void setPotential(T factor, double value) {
-        potential.put(factor, value);
+    public void setPotential(T neighbo, double value) {
+        potential.put(neighbo, value);
     }
 
     /**
@@ -98,7 +98,7 @@ public class IndependentFactor<T> extends AbstractFactor<T> {
      * of its neighbors out.
      */
     @Override
-    public long iter() {
+    protected long iter() {
         for (T neighbor : getNeighbors()) {
             send(getPotential(neighbor), neighbor);
         }
