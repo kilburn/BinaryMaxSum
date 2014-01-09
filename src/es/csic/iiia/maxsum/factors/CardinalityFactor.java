@@ -84,7 +84,7 @@ public class CardinalityFactor<T> extends AbstractFactor<T> {
         constraintChecks += size;
 
         // Sort them from best to worst
-        Collections.sort(vals_and_indices);
+        Collections.sort(vals_and_indices, Collections.reverseOrder());
 
         // Prepare the reverse index
         int[] ridx = new int[size];
@@ -188,7 +188,7 @@ public class CardinalityFactor<T> extends AbstractFactor<T> {
         public int compareTo(Triplet t) {
             constraintChecks++;
 
-            return -getMaxOperator().compare(cost, t.cost);
+            return getMaxOperator().compare(cost, t.cost);
         }
     }
 
