@@ -63,6 +63,7 @@ import java.util.List;
  * You must ensure that there are exactly <em>2**len(neighbors)</em> costs/utilities in the
  * potential array.
  *
+ * @param <T> Type of the factor's identity.
  * @author Marc Pujol <mpujol@iiia.csic.es>
  */
 public class StandardFactor<T> extends AbstractFactor<T> {

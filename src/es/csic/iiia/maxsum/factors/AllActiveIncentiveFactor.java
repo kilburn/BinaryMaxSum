@@ -53,6 +53,7 @@ import es.csic.iiia.maxsum.util.BestValuesTracker;
  *      v^- = \sum_{j} min(v_j, 0)
  * </pre>
  *
+ * @param <T> Type of the factor's identity.
  * @author Marc Pujol <mpujol@iiia.csic.es>
  */
 public class AllActiveIncentiveFactor<T> extends AbstractFactor<T> {

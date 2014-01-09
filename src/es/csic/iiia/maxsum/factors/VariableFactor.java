@@ -39,6 +39,7 @@ package es.csic.iiia.maxsum.factors;
 /**
  * Factor defined over a single variable (variable node in classical MaxSum).
  *
+ * @param <T> Type of the factor's identity.
  * @author Marc Pujol <mpujol@iiia.csic.es>
  */
 public class VariableFactor<T> extends AbstractFactor<T> {

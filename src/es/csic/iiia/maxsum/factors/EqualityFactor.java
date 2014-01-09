@@ -40,6 +40,7 @@ package es.csic.iiia.maxsum.factors;
  * Equality constraint, that tries to ensure that all variables have the same value.
  * <strong>This factor is exactly the same as the {@link VariableFactor}.</strong>
  *
+ * @param <T> Type of the factor's identity.
  * @author Marc Pujol <mpujol@iiia.csic.es>
  */
 public class EqualityFactor<T> extends VariableFactor<T> {

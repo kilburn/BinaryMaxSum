@@ -48,6 +48,7 @@ import es.csic.iiia.maxsum.MaxOperator;
  * Outgoing messages are computed in <em>O(n)</em> time, where <em>n</em> is the
  * total number of variables connected to this factor.
  *
+ * @param <T> Type of the factor's identity.
  * @author Marc Pujol <mpujol@iiia.csic.es>
  */
 public class AtMostOneFactor<T> extends AbstractFactor<T> {

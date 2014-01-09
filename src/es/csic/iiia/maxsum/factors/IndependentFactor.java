@@ -43,6 +43,7 @@ import java.util.Map;
  * Factor that includes an independent cost/utility for each of the
  * variables in its scope (its neighbors).
  *
+ * @param <T> Type of the factor's identity.
  * @author Marc Pujol <mpujol@iiia.csic.es>
  */
 public class IndependentFactor<T> extends AbstractFactor<T> {

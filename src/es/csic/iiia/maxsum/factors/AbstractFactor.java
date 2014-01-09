@@ -47,6 +47,7 @@ import java.util.Map;
 /**
  * Skeletal implementation of a Max-Sum factor.
  *
+ * @param <T> Type of the factor's identity.
  * @author Marc Pujol <mpujol@iiia.csic.es>
  */
 public abstract class AbstractFactor<T> implements Factor<T> {
@@ -113,7 +114,7 @@ public abstract class AbstractFactor<T> implements Factor<T> {
 
     /**
      * Run an iteration of the factor.
-     * 
+     *
      * @return
      */
     protected abstract long iter();

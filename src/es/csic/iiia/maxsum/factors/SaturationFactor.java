@@ -83,6 +83,7 @@ import java.util.Map;
  * <li>{@code v*_i} is the sum of all positive messages excluding the one from neighbor {@code i}</li>
  * </ul>
  *
+ * @param <T> Type of the factor's identity.
  * @author Marc Pujol <mpujol@iiia.csic.es>
  */
 public class SaturationFactor<T> extends IndependentFactor<T> {

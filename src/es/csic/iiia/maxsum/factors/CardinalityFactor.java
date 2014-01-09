@@ -50,6 +50,7 @@ import java.util.logging.Logger;
  * Outgoing messages are computed in <em>O(n*log(n))</em> time, where <em>n</em>
  * is the number of variables connected to this factor.
  *
+ * @param <T> Type of the factor's identity.
  * @author Marc Pujol <mpujol@iiia.csic.es>
  */
 public class CardinalityFactor<T> extends AbstractFactor<T> {

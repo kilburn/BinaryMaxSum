@@ -47,6 +47,7 @@ import java.util.List;
  * <p/>
  * The resulting complexity is the same as that of the inner factor.
  *
+ * @param <T> Type of the factor's identity.
  * @author Marc Pujol <mpujol@iiia.csic.es>
  */
 public class CompositeIndependentFactor<T> extends AbstractFactor<T>

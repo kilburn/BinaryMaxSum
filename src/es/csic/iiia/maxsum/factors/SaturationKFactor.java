@@ -57,6 +57,7 @@ import java.util.Map;
  * Messages from this factor can be computed in <em>O(n log(k))</em> time. First, the maximization
  * cases are divided in two groups: those where <em>n_a <= k</em> and those where <em>n_a > k</em>.
  *
+ * @param <T> Type of the factor's identity.
  * @author Marc Pujol <mpujol@iiia.csic.es>
  */
 public class SaturationKFactor<T> extends IndependentFactor<T> {

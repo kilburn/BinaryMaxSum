@@ -41,7 +41,7 @@ import java.util.List;
 /**
  * Basic definition of a MaxSum factor.
  *
- * @param <T> Type of the identity of this factor.
+ * @param <T> Type of the factor's identity.
  * @author Marc Pujol <mpujol@iiia.csic.es>
  */
 public interface Factor<T extends Object> {
