@@ -84,6 +84,16 @@ public class StandardFactorTest {
         runAtMostOne(new Maximize(), values, new double[]{-2, 0});
     }
 
+    @Test
+    public void testRun4() {
+    	MaxOperator op = new Maximize();
+    	final double[] values  = new double[]{9, 6};
+    	final double[] results  = new double[]{6, 0};
+        final double[] potential = new double[]{0, op.getWorstValue(), 0, 0};
+
+        run(op, potential, values, results);
+    }
+    
     private void runSelector(MaxOperator op, double[] values, double[] results) {
         run(op, getSelectorPotential(op, values.length), values, results);
     }
