@@ -45,6 +45,8 @@ public class TwoSidedReserveFactor<T> extends AbstractFactor<T> {
             return nNeighbors;
         }
 
+        // Optimization. If there are no elements in set B, messages for the 
+        // members in set A is always 0.
         if (nElementsB == 0) {
             for (T neigh : getNeighbors()) {
                 send(0.0, neigh);
