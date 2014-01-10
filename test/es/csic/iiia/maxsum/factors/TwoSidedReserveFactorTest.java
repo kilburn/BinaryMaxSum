@@ -54,7 +54,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
 /**
- *
+ * 
  * @author Toni Penya-Alba <tonipenya@iiia.csic.es>
  */
 public class TwoSidedReserveFactorTest extends CrossFactorTestAbstract {
@@ -63,92 +63,95 @@ public class TwoSidedReserveFactorTest extends CrossFactorTestAbstract {
 
     @Test
     public void testRun1() {
-        double[] values  = new double[]{3, 2, -1, 1, -1, -3};
-        double[] results = new double[]{0, 0, 0, 0, 0, 0};
+        double[] values = new double[] { 3, 2, -1, 1, -1, -3 };
+        double[] results = new double[] { 0, 0, 0, 0, 0, 0 };
 
         run(new Maximize(), values, results, 3);
     }
 
     @Test
     public void testRun2() {
-        double[] values  = new double[]{2, -1, -1, 2, 1, -1};
-        double[] results = new double[]{1, 1, 1, -1, -1, -1};
+        double[] values = new double[] { 2, -1, -1, 2, 1, -1 };
+        double[] results = new double[] { 1, 1, 1, -1, -1, -1 };
 
         run(new Maximize(), values, results, 3);
     }
-    
+
     @Test
     public void testRun3() {
-    	double[] values  = new double[]{1, -1, 1, -1};
-    	double[] results = new double[]{1, 0, 0, -1};
-    	
-    	run(new Maximize(), values, results, 2);
+        double[] values = new double[] { 1, -1, 1, -1 };
+        double[] results = new double[] { 1, 0, 0, -1 };
+
+        run(new Maximize(), values, results, 2);
     }
-    
+
     @Test
     public void testRun4() {
-        double[] values  = new double[]{6, 4, 8};
-        double[] results = new double[]{8, -8, -4};
-        
+        double[] values = new double[] { 6, 4, 8 };
+        double[] results = new double[] { 8, -8, -4 };
+
         run(new Maximize(), values, results, 1);
     }
 
     @Test
     public void testRunEmptyA1() {
-        double[] values  = new double[]{1, -1};
-        double[] results = new double[]{0, 0};
+        double[] values = new double[] { 1, -1 };
+        double[] results = new double[] { 0, 0 };
 
         run(new Maximize(), values, results, 2);
     }
-    
+
     @Test
     public void testRunEmptyA2() {
-        double[] values  = new double[]{-1, -2};
-        double[] results = new double[]{0, 0};
+        double[] values = new double[] { -1, -2 };
+        double[] results = new double[] { 0, 0 };
 
         run(new Maximize(), values, results, 2);
     }
-    
+
     @Test
     public void testRunEmptyA3() {
-        double[] values  = new double[]{1, 2};
-        double[] results = new double[]{0, 0};
+        double[] values = new double[] { 1, 2 };
+        double[] results = new double[] { 0, 0 };
 
         run(new Maximize(), values, results, 2);
     }
-    
+
     @Test
     public void testRunEmptyB1() {
-    	MaxOperator op = new Maximize();
+        MaxOperator op = new Maximize();
 
-        double[] values  = new double[]{-1, 1};
-        double[] results = new double[]{op.getWorstValue(), op.getWorstValue()};
+        double[] values = new double[] { -1, 1 };
+        double[] results = new double[] { op.getWorstValue(),
+                op.getWorstValue() };
 
         run(op, values, results, 0);
     }
-    
+
     @Test
     public void testRunEmptyB2() {
-    	MaxOperator op = new Maximize();
+        MaxOperator op = new Maximize();
 
-        double[] values  = new double[]{-1, -2};
-        double[] results = new double[]{op.getWorstValue(), op.getWorstValue()};
+        double[] values = new double[] { -1, -2 };
+        double[] results = new double[] { op.getWorstValue(),
+                op.getWorstValue() };
 
         run(new Maximize(), values, results, 0);
     }
-    
+
     @Test
     public void testRunEmptyB3() {
-    	MaxOperator op = new Maximize();
+        MaxOperator op = new Maximize();
 
-        double[] values  = new double[]{1, 2};
-        double[] results = new double[]{op.getWorstValue(), op.getWorstValue()};
+        double[] values = new double[] { 1, 2 };
+        double[] results = new double[] { op.getWorstValue(),
+                op.getWorstValue() };
 
         run(op, values, results, 0);
     }
-      
+
     private void run(MaxOperator op, double[] values, double[] results,
-            		 int nElementsA) {
+            int nElementsA) {
         CommunicationAdapter com = mock(CommunicationAdapter.class);
 
         // Setup incoming messages
@@ -159,7 +162,7 @@ public class TwoSidedReserveFactorTest extends CrossFactorTestAbstract {
         s.setMaxOperator(op);
         s.setIdentity(s);
 
-        for (int i=0; i<cfs.length; i++) {
+        for (int i = 0; i < cfs.length; i++) {
             cfs[i] = mock(Factor.class);
             s.addNeighbor(cfs[i]);
             s.receive(values[i], cfs[i]);
@@ -167,22 +170,21 @@ public class TwoSidedReserveFactorTest extends CrossFactorTestAbstract {
         // This makes the factor run and send messages through the mocked com
         s.run();
 
-        for (int i=0; i<cfs.length; i++) {
+        for (int i = 0; i < cfs.length; i++) {
             verify(com).send(eq(results[i], DELTA), same(s), same(cfs[i]));
         }
     }
 
     @Override
     public Factor[] buildFactors(MaxOperator op, Factor[] neighbors) {
-    	int nElementsA = getRandomIntValue(neighbors.length);
-    	
-        return new Factor[]{
-            buildSpecificFactor(op, neighbors, nElementsA),
-            buildStandardFactor(op, neighbors, nElementsA),
-        };
+        int nElementsA = getRandomIntValue(neighbors.length);
+
+        return new Factor[] { buildSpecificFactor(op, neighbors, nElementsA),
+                buildStandardFactor(op, neighbors, nElementsA), };
     }
 
-    private Factor buildSpecificFactor(MaxOperator op, Factor[] neighbors, int nElementsA) {
+    private Factor buildSpecificFactor(MaxOperator op, Factor[] neighbors,
+            int nElementsA) {
         TwoSidedReserveFactor factor = new TwoSidedReserveFactor();
         factor.setNElementsA(nElementsA);
         factor.setMaxOperator(op);
@@ -190,7 +192,8 @@ public class TwoSidedReserveFactorTest extends CrossFactorTestAbstract {
         return factor;
     }
 
-    private Factor buildStandardFactor(MaxOperator op, Factor[] neighbors, int nElementsA) {
+    private Factor buildStandardFactor(MaxOperator op, Factor[] neighbors,
+            int nElementsA) {
         StandardFactor factor = new StandardFactor();
         factor.setMaxOperator(op);
         link(factor, neighbors);
@@ -198,24 +201,25 @@ public class TwoSidedReserveFactorTest extends CrossFactorTestAbstract {
         return factor;
     }
 
-    public double[] buildPotential(MaxOperator op, Factor[] neighbors, int nElementsA) {
+    public double[] buildPotential(MaxOperator op, Factor[] neighbors,
+            int nElementsA) {
         final int nNeighbors = neighbors.length;
         final int nElementsB = nNeighbors - nElementsA;
 
         double[] values = new double[1 << nNeighbors];
 
         for (int configurationIdx = 0; configurationIdx < values.length; configurationIdx++) {
-        	int reserve = 0;
-        	for (int neighIdx = 0; neighIdx < nNeighbors; neighIdx++) {
-        		int mask = 1 << neighIdx;
-        		if ((configurationIdx & mask) > 0) {
-        			reserve += (neighIdx < nElementsB) ? -1 : 1;
-        		}
-        	}
-        	
-        	values[configurationIdx] = (reserve < 0) ? op.getWorstValue() : 0;
+            int reserve = 0;
+            for (int neighIdx = 0; neighIdx < nNeighbors; neighIdx++) {
+                int mask = 1 << neighIdx;
+                if ((configurationIdx & mask) > 0) {
+                    reserve += (neighIdx < nElementsB) ? -1 : 1;
+                }
+            }
+
+            values[configurationIdx] = (reserve < 0) ? op.getWorstValue() : 0;
         }
-        
+
         return values;
     }
 

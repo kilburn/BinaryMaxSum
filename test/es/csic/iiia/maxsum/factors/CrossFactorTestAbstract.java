@@ -185,7 +185,7 @@ public abstract class CrossFactorTestAbstract {
         List<Double> specificMessages = specificMessagesCaptor.getAllValues();
         List<Double> genericMessages = genericMessagesCaptor.getAllValues();
         for (int i=0; i<neighbors.length; i++) {
-        	assertEquals("Failed with neighbor " + i, genericMessages.get(i), specificMessages.get(i), DELTA);
+            assertEquals("Failed with neighbor " + i, genericMessages.get(i), specificMessages.get(i), DELTA);
         }
 
     }

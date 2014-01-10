@@ -86,10 +86,10 @@ public class StandardFactorTest {
 
     @Test
     public void testRun4() {
-    	MaxOperator op = new Maximize();
-    	final double[] values  = new double[]{9, 6};
-    	final double[] results  = new double[]{6, 0};
-        final double[] potential = new double[]{0, op.getWorstValue(), 0, 0};
+        MaxOperator op = new Maximize();
+        final double[] values = new double[] { 9, 6 };
+        final double[] results = new double[] { 6, 0 };
+        final double[] potential = new double[] { 0, op.getWorstValue(), 0, 0 };
 
         run(op, potential, values, results);
     }
