@@ -126,7 +126,7 @@ public abstract class CrossFactorTestAbstract {
             int len = getRandomIntValue(MAX_NEIGHBORS) + 1;
             double[] values = new double[len];
             for (int j=0; j<len; j++) {
-                values[j] = generator.nextDouble();
+                values[j] = generator.nextDouble() - 0.5;
             }
             LOG.log(Level.FINEST, "Messages: {0}", Arrays.toString(values));
 
