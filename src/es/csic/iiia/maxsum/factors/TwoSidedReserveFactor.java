@@ -72,7 +72,7 @@ public class TwoSidedReserveFactor<T> extends AbstractFactor<T> {
         final double A = op.max(nuAthetaPlus, -nuBtheta);
         final double B = op.max(0, op.max(nuBTthetaPlus, -nuAtheta));
 
-        constraintChecks += 4;
+        constraintChecks += 6;
 
         final int nPositiveA = getNPositive(setAPairs);
         if (nPositiveA > theta) {
@@ -81,22 +81,22 @@ public class TwoSidedReserveFactor<T> extends AbstractFactor<T> {
             }
         } else {
             final int nActiveA = Math.max(theta, nPositiveA);
-            // Send -A to active sellers
+            // Send -A to active 'a's
             for (int i = 0; i < nActiveA; i++) {
                 send(-A, setAPairs.get(i).id);
             }
 
-            // Send B to inactive sellers
+            // Send B to inactive 'a's
             for (int i = nActiveA; i < nElementsA; i++) {
                 send(B, setAPairs.get(i).id);
             }
 
-            // Send -B to active buyers
+            // Send -B to active 'b's
             for (int i = 0; i < theta; i++) {
                 send(-B, setBPairs.get(i).id);
             }
 
-            // Send A to inactive buyers
+            // Send A to inactive 'b's
             for (int i = theta; i < nElementsB; i++) {
                 send(A, setBPairs.get(i).id);
             }
