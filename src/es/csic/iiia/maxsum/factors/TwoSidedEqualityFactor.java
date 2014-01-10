@@ -36,7 +36,6 @@ public class TwoSidedEqualityFactor<T> extends AbstractFactor<T> {
         final int nElementsB = nNeighbors - nElementsA;
         constraintChecks = 0;
 
-        // TODO: Remove this and see what happens.
         if (nElementsA == 0 || nElementsB == 0) {
             for (T neigh : getNeighbors()) {
                 send(op.getWorstValue(), neigh);
