@@ -55,10 +55,10 @@ public class TwoSidedReserveFactor<T> extends AbstractFactor<T> {
             return nNeighbors;
         }
 
-        List<Pair> setAPairs = getSortedSetAPairs();
-        List<Pair> setBPairs = getSortedSetBPairs();
+        final List<Pair> setAPairs = getSortedSetAPairs();
+        final List<Pair> setBPairs = getSortedSetBPairs();
 
-        int theta = getTheta(setAPairs, setBPairs);
+        final int theta = getTheta(setAPairs, setBPairs);
 
         final double nuAtheta = (theta == 0) ? -op.getWorstValue() : setAPairs
                 .get(theta - 1).value;
@@ -74,13 +74,13 @@ public class TwoSidedReserveFactor<T> extends AbstractFactor<T> {
 
         constraintChecks += 4;
 
-        int nPositiveA = getNPositive(setAPairs);
+        final int nPositiveA = getNPositive(setAPairs);
         if (nPositiveA > theta) {
             for (T neighbor : getNeighbors()) {
                 send(0, neighbor);
             }
         } else {
-            int nActiveA = Math.max(theta, nPositiveA);
+            final int nActiveA = Math.max(theta, nPositiveA);
             // Send -A to active sellers
             for (int i = 0; i < nActiveA; i++) {
                 send(-A, setAPairs.get(i).id);
