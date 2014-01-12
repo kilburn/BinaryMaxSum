@@ -45,6 +45,8 @@ public class TwoSidedReserveFactor<T> extends AbstractFactor<T> {
             return nNeighbors;
         }
 
+        // Optimization. If there are no elements in set B, messages for the 
+        // members in set A is always 0.
         if (nElementsB == 0) {
             for (T neigh : getNeighbors()) {
                 send(0.0, neigh);
@@ -53,10 +55,10 @@ public class TwoSidedReserveFactor<T> extends AbstractFactor<T> {
             return nNeighbors;
         }
 
-        List<Pair> setAPairs = getSortedSetAPairs();
-        List<Pair> setBPairs = getSortedSetBPairs();
+        final List<Pair> setAPairs = getSortedSetAPairs();
+        final List<Pair> setBPairs = getSortedSetBPairs();
 
-        int theta = getTheta(setAPairs, setBPairs);
+        final int theta = getTheta(setAPairs, setBPairs);
 
         final double nuAtheta = (theta == 0) ? -op.getWorstValue() : setAPairs
                 .get(theta - 1).value;
@@ -70,31 +72,31 @@ public class TwoSidedReserveFactor<T> extends AbstractFactor<T> {
         final double A = op.max(nuAthetaPlus, -nuBtheta);
         final double B = op.max(0, op.max(nuBTthetaPlus, -nuAtheta));
 
-        constraintChecks += 4;
+        constraintChecks += 6;
 
-        int nPositiveA = getNPositive(setAPairs);
+        final int nPositiveA = getNPositive(setAPairs);
         if (nPositiveA > theta) {
             for (T neighbor : getNeighbors()) {
                 send(0, neighbor);
             }
         } else {
-            int nActiveA = Math.max(theta, nPositiveA);
-            // Send -A to active sellers
+            final int nActiveA = Math.max(theta, nPositiveA);
+            // Send -A to active 'a's
             for (int i = 0; i < nActiveA; i++) {
                 send(-A, setAPairs.get(i).id);
             }
 
-            // Send B to inactive sellers
+            // Send B to inactive 'a's
             for (int i = nActiveA; i < nElementsA; i++) {
                 send(B, setAPairs.get(i).id);
             }
 
-            // Send -B to active buyers
+            // Send -B to active 'b's
             for (int i = 0; i < theta; i++) {
                 send(-B, setBPairs.get(i).id);
             }
 
-            // Send A to inactive buyers
+            // Send A to inactive 'b's
             for (int i = theta; i < nElementsB; i++) {
                 send(A, setBPairs.get(i).id);
             }

@@ -7,3 +7,9 @@ dist
 
 # Netbeans stuff
 nbproject/private
+
+# Eclipse stuff
+.classpath
+.externalToolBuilders/
+.project
+.settings/
