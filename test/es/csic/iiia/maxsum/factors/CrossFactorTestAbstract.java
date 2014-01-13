@@ -58,6 +58,7 @@ import org.mockito.ArgumentCaptor;
  * @see StandardFactor
  * @author Marc Pujol <mpujol@iiia.csic.es>
  */
+@SuppressWarnings({"unchecked","rawtypes"})
 public abstract class CrossFactorTestAbstract {
     private static final Logger LOG = Logger.getLogger(CrossFactorTestAbstract.class.getName());
 

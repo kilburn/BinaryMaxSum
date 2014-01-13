@@ -54,9 +54,10 @@ import static org.mockito.Mockito.verify;
 
 /**
  * Tests the SaturationKFactor implementation.
- * 
+ *
  * @author Marc Pujol <mpujol@iiia.csic.es>
  */
+@SuppressWarnings({"unchecked","rawtypes"})
 public class SaturationKFactorTest extends CrossFactorTestAbstract {
     private static final Logger LOG = Logger.getLogger(SaturationKFactorTest.class.getName());
 

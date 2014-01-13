@@ -39,12 +39,6 @@ package es.csic.iiia.maxsum.factors;
 import es.csic.iiia.maxsum.Factor;
 import es.csic.iiia.maxsum.MaxOperator;
 import java.util.Arrays;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  * Tests the {@link EqualityFactor} HOP by checking the computed messages against those computed
@@ -52,6 +46,7 @@ import static org.junit.Assert.*;
  *
  * @author Marc Pujol <mpujol@iiia.csic.es>
  */
+@SuppressWarnings({"unchecked","rawtypes"})
 public class EqualityFactorTest extends CrossFactorTestAbstract {
 
     @Override

@@ -50,6 +50,7 @@ import org.junit.Test;
  *
  * @author Marc Pujol <mpujol@iiia.csic.es>
  */
+@SuppressWarnings({"unchecked","rawtypes"})
 public class StandardFactorTest {
 
     private final double DELTA = 0.0001d;
@@ -93,7 +94,7 @@ public class StandardFactorTest {
 
         run(op, potential, values, results);
     }
-    
+
     private void runSelector(MaxOperator op, double[] values, double[] results) {
         run(op, getSelectorPotential(op, values.length), values, results);
     }

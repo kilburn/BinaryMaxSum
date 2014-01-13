@@ -40,23 +40,15 @@ import es.csic.iiia.maxsum.CommunicationAdapter;
 import es.csic.iiia.maxsum.Factor;
 import es.csic.iiia.maxsum.MaxOperator;
 import es.csic.iiia.maxsum.Maximize;
-import es.csic.iiia.maxsum.Minimize;
-import java.util.Arrays;
-import java.util.List;
-
-import static org.mockito.Matchers.same;
 import static org.mockito.Mockito.*;
 import static org.mockito.AdditionalMatchers.eq;
-import static org.junit.Assert.*;
-
-import org.junit.Ignore;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 
 /**
- * 
+ *
  * @author Toni Penya-Alba <tonipenya@iiia.csic.es>
  */
+@SuppressWarnings({"unchecked","rawtypes"})
 public class TwoSidedReserveFactorTest extends CrossFactorTestAbstract {
 
     private final double DELTA = 0.0001d;

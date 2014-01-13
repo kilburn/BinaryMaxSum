@@ -36,20 +36,15 @@
  */
 package es.csic.iiia.maxsum.factors;
 
-import es.csic.iiia.maxsum.factors.cardinality.CardinalityFunction;
 import es.csic.iiia.maxsum.CommunicationAdapter;
 import es.csic.iiia.maxsum.Factor;
 import es.csic.iiia.maxsum.factors.cardinality.KAlphaFunction;
-import es.csic.iiia.maxsum.factors.cardinality.MaxAgFunction;
 import es.csic.iiia.maxsum.MaxOperator;
-import es.csic.iiia.maxsum.Maximize;
 import es.csic.iiia.maxsum.Minimize;
-import es.csic.iiia.maxsum.TickCommunicationAdapter;
 import java.util.Arrays;
 import java.util.logging.Logger;
 import static org.mockito.Mockito.*;
 import static org.mockito.AdditionalMatchers.eq;
-import static org.junit.Assert.*;
 import org.junit.Test;
 
 /**
@@ -57,8 +52,8 @@ import org.junit.Test;
  * @author Marc Pujol <mpujol@iiia.csic.es>
  */
 @SuppressWarnings({"unchecked","rawtypes"})
-public class CompositeIndependentFactorTest extends CrossFactorTestAbstract {
-    private static final Logger LOG = Logger.getLogger(CompositeIndependentFactorTest.class.getName());
+public class WeightingFactorTest extends CrossFactorTestAbstract {
+    private static final Logger LOG = Logger.getLogger(WeightingFactorTest.class.getName());
 
     private final double DELTA = 0.0001d;
     private final double K     = 1;
@@ -88,65 +83,6 @@ public class CompositeIndependentFactorTest extends CrossFactorTestAbstract {
         run(new Minimize(), values, potentials, results);
     }
 
-    @Test
-    public void testRunSelectorAndWorkload() {
-        final int N_ITERATIONS = 10;
-        MaxOperator operator = new Maximize();
-        TickCommunicationAdapter com = new TickCommunicationAdapter();
-        double[][] utilities = new double[][]{
-            {0.017, 10.01},
-            {0.1,   1.599},
-        };
-        int[] choices = new int[]{1, 0};
-
-        final int nAgents  = utilities.length;
-        final int nTargets = utilities[0].length;
-
-        // Create the carinality factors for each target
-        CardinalityFunction f = new MaxAgFunction(1, Double.NEGATIVE_INFINITY);
-        CardinalityFactor[] cfs = new CardinalityFactor<?>[nTargets];
-        for (int i = 0; i < nTargets; i++) {
-            cfs[i] = new CardinalityFactor<Factor<?>>();
-            cfs[i].setFunction(f);
-            init(cfs[i], operator, com);
-        }
-
-        // Create a potential + selector for each agent
-        SelectorFactor[] sfs = new SelectorFactor[nAgents];
-        CompositeIndependentFactor[] ifs = new CompositeIndependentFactor[nAgents];
-        for (int agent = 0; agent < nAgents; agent++) {
-            sfs[agent] = new SelectorFactor<Factor>();
-            IndependentFactor<Factor<?>> pot = new IndependentFactor<Factor<?>>();
-            ifs[agent] = new CompositeIndependentFactor<Factor<?>>();
-            init(ifs[agent], operator, com);
-            ifs[agent].setIndependentFactor(pot);
-            ifs[agent].setInnerFactor(sfs[agent]);
-
-            // Set potentials and connect the factors
-            for (int target = 0; target < nTargets; target++) {
-                pot.setPotential(cfs[target], utilities[agent][target]);
-                cfs[target].addNeighbor(ifs[agent]);
-                ifs[agent].addNeighbor(cfs[target]);
-            }
-        }
-
-        // Ok now everything is built. Let's rock it!
-        for (int i = 0; i < N_ITERATIONS; i++) {
-            for (int agent = 0; agent < nAgents; agent++) {
-                ifs[agent].run();
-            }
-            for (int target = 0; target < nTargets; target++) {
-                cfs[target].run();
-            }
-            com.tick();
-        }
-
-        // Show choices
-        for (int agent = 0; agent < nAgents; agent++) {
-            assertSame(cfs[choices[agent]], sfs[agent].select());
-        }
-    }
-
     private void init(Factor f, MaxOperator op, CommunicationAdapter com) {
         f.setIdentity(f);
         f.setMaxOperator(op);
@@ -154,33 +90,27 @@ public class CompositeIndependentFactorTest extends CrossFactorTestAbstract {
     }
 
     private void run(MaxOperator op, double[] values, double[] potentials, double[] expected) {
-        CommunicationAdapter<Factor> com = mock(CommunicationAdapter.class);
+        CommunicationAdapter com = mock(CommunicationAdapter.class);
 
         // Setup incoming messages
-        SelectorFactor[] sfs = new SelectorFactor[values.length];
+        Factor[] sfs = new Factor[values.length];
 
         // Build a factor that is made of independent potentials plus a
         // cardinality workload.
-        CompositeIndependentFactor<Factor> c = new CompositeIndependentFactor<Factor>();
-        IndependentFactor<Factor> potential = new IndependentFactor<Factor>();
-        c.setIndependentFactor(potential);
-        CardinalityFactor<Factor> cardinal = new CardinalityFactor<Factor>();
+        CardinalityFactor cardinal = new CardinalityFactor();
         cardinal.setFunction(new KAlphaFunction(K, ALPHA));
-        c.setInnerFactor(cardinal);
-
-        c.setMaxOperator(op);
-        c.setIdentity(c);
-        c.setCommunicationAdapter(com);
+        WeightingFactor f = new WeightingFactor(cardinal);
+        init(f, op, com);
 
         for (int i=0; i<sfs.length; i++) {
-            sfs[i] = new SelectorFactor<Factor>();
+            sfs[i] = mock(Factor.class);
             sfs[i].setMaxOperator(op);
             sfs[i].setIdentity(sfs[i]);
             sfs[i].setCommunicationAdapter(com);
 
-            c.addNeighbor(sfs[i]);
-            potential.setPotential(sfs[i], potentials[i]);
-            c.receive(values[i], sfs[i]);
+            f.addNeighbor(sfs[i]);
+            f.setPotential(sfs[i], potentials[i]);
+            f.receive(values[i], sfs[i]);
         }
 
         // This makes the factor run and send messages through the mocked com
@@ -188,7 +118,7 @@ public class CompositeIndependentFactorTest extends CrossFactorTestAbstract {
 
         // Check expectations
         for (int i=0; i<sfs.length; i++) {
-            verify(com).send(eq(expected[i], DELTA), same(c), same(sfs[i]));
+            verify(com).send(eq(expected[i], DELTA), same(f.getIdentity()), same(sfs[i]));
         }
     }
 
@@ -211,16 +141,13 @@ public class CompositeIndependentFactorTest extends CrossFactorTestAbstract {
     }
 
     private Factor buildSpecificFactor(MaxOperator op, Factor[] neighbors, double[] independentPotentials) {
-        CompositeIndependentFactor factor = new CompositeIndependentFactor();
+        WeightingFactor factor = new WeightingFactor(new SelectorFactor());
         factor.setMaxOperator(op);
-        factor.setInnerFactor(new SelectorFactor());
 
-        IndependentFactor independent = new IndependentFactor();
         link(factor, neighbors);
         for (int i=0; i<neighbors.length; i++) {
-            independent.setPotential(neighbors[i], independentPotentials[i]);
+            factor.setPotential(neighbors[i], independentPotentials[i]);
         }
-        factor.setIndependentFactor(independent);
 
         return factor;
     }
