@@ -37,6 +37,7 @@
 package es.csic.iiia.maxsum.factors;
 
 import java.util.List;
+import java.util.Map;
 
 import es.csic.iiia.maxsum.MaxOperator;
 
@@ -131,7 +132,14 @@ public class TwoSidedReserveFactor<T> extends AbstractTwoSidedFactor<T> {
 
         return constraintChecks;
     }
-
+    
+    @Override
+    public double eval(Map<T, Boolean> values) {
+        final int reserve = getReserve(values);
+        
+        return (reserve >= 0) ? 0 : getMaxOperator().getWorstValue();
+    }
+    
     private int getTheta(List<Pair> setAPairs, List<Pair> setBPairs) {
         final MaxOperator op = getMaxOperator();
         final int nElementsB = setBPairs.size();

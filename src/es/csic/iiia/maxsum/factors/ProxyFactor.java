@@ -40,6 +40,7 @@ import es.csic.iiia.maxsum.CommunicationAdapter;
 import es.csic.iiia.maxsum.Factor;
 import es.csic.iiia.maxsum.MaxOperator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Skeletal implementation of a factor that relays (possibly modified) messages into/out of
@@ -129,6 +130,11 @@ public abstract class ProxyFactor<T> implements Factor<T> {
     @Override
     public void send(double message, T recipient) {
         communicationAdapter.send(message, innerFactor.getIdentity(), recipient);
+    }
+
+    @Override
+    public double evaluate(Map<T, Boolean> values) {
+        return innerFactor.evaluate(values);
     }
 
     @Override

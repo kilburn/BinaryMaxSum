@@ -38,7 +38,6 @@ package es.csic.iiia.maxsum.factors;
 
 import es.csic.iiia.maxsum.MaxOperator;
 import es.csic.iiia.maxsum.util.BestValuesTracker;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -95,6 +94,18 @@ public class SaturationFactor<T> extends IndependentFactor<T> {
     public void setMaxOperator(MaxOperator maxOperator) {
         super.setMaxOperator(maxOperator);
         max_b = new BestValuesTracker<T>(maxOperator);
+    }
+
+    @Override
+    protected double eval(Map<T, Boolean> values) {
+        BestValuesTracker<T> chosen = new BestValuesTracker<T>(getMaxOperator());
+        for (T neighbor : getNeighbors()) {
+            if (values.get(neighbor)) {
+                chosen.track(neighbor, getPotential(neighbor));
+            }
+        }
+
+        return chosen.getBestValue();
     }
 
     @Override

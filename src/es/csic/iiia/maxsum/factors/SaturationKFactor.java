@@ -38,7 +38,7 @@ package es.csic.iiia.maxsum.factors;
 
 import es.csic.iiia.maxsum.MaxOperator;
 import es.csic.iiia.maxsum.util.BestKValuesTracker;
-import java.util.HashMap;
+import es.csic.iiia.maxsum.util.BoundedTreeSet;
 import java.util.Map;
 
 /**
@@ -98,6 +98,20 @@ public class SaturationKFactor<T> extends IndependentFactor<T> {
      */
     public int getK() {
         return k;
+    }
+
+    @Override
+    protected double eval(Map<T, Boolean> values) {
+        BestKValuesTracker<T> chosen = new BestKValuesTracker<T>(getMaxOperator(), k);
+
+        // Pick all active neighbors (the treeset will evict the ones with lower utilities)
+        for (T neighbor : getNeighbors()) {
+            if (values.get(neighbor)) {
+                chosen.track(neighbor, getPotential(neighbor));
+            }
+        }
+
+        return chosen.sum();
     }
 
     @Override

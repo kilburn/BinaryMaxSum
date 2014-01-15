@@ -38,6 +38,7 @@ package es.csic.iiia.maxsum.factors;
 
 import es.csic.iiia.maxsum.util.BestValuesTracker;
 import es.csic.iiia.maxsum.MaxOperator;
+import java.util.Map;
 
 /**
  * Max-sum "at most one" factor.
@@ -59,6 +60,20 @@ public class AtMostOneFactor<T> extends AbstractFactor<T> {
     public void setMaxOperator(MaxOperator maxOperator) {
         super.setMaxOperator(maxOperator);
         tracker = new BestValuesTracker<T>(maxOperator);
+    }
+
+    @Override
+    protected double eval(Map<T, Boolean> values) {
+        int nActive = 0;
+        for (T neighbor : getNeighbors()) {
+            if (values.get(neighbor)) {
+                nActive++;
+            }
+            if (nActive > 1) {
+                return getMaxOperator().getWorstValue();
+            }
+        }
+        return 0;
     }
 
     @Override

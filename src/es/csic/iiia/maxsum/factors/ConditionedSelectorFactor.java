@@ -38,6 +38,7 @@ package es.csic.iiia.maxsum.factors;
 
 import es.csic.iiia.maxsum.util.BestValuesTracker;
 import es.csic.iiia.maxsum.MaxOperator;
+import java.util.Map;
 
 /**
  * Max-sum conditioned selector factor.
@@ -74,6 +75,25 @@ public class ConditionedSelectorFactor<T> extends AbstractFactor<T> {
      */
     public void setConditionNeighbor(T condition) {
         this.conditionNeighbor = condition;
+    }
+
+    @Override
+    protected double eval(Map<T, Boolean> values) {
+        int nActive = 0;
+        for (T neighbor : getNeighbors()) {
+            if (neighbor.equals(conditionNeighbor)) {
+                continue;
+            }
+            if (values.get(neighbor)) {
+                nActive++;
+            }
+        }
+
+        boolean c = values.get(conditionNeighbor);
+        if ((c && nActive == 1) || (!c && nActive == 0)) {
+            return 0;
+        }
+        return getMaxOperator().getWorstValue();
     }
 
     @Override

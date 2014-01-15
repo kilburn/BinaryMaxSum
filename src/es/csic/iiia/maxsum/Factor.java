@@ -37,6 +37,7 @@
 package es.csic.iiia.maxsum;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Basic definition of a MaxSum factor.
@@ -116,6 +117,14 @@ public interface Factor<T extends Object> {
      * @param recipient intended recipient
      */
     public void send(double message, T recipient);
+
+    /**
+     * Evaluate this factor given the neighbor's values.
+     *
+     * @param values map of value for each neighbor
+     * @return cost/utility of this factor given the neighbor's values.
+     */
+    public double evaluate(Map<T, Boolean> values);
 
     /**
      * Run the this factor (process incoming messages and send out new ones).

@@ -38,6 +38,7 @@ package es.csic.iiia.maxsum.factors;
 
 import es.csic.iiia.maxsum.util.BestValuesTracker;
 import es.csic.iiia.maxsum.MaxOperator;
+import java.util.Map;
 
 /**
  * Max-sum selector factor.
@@ -59,6 +60,17 @@ public class SelectorFactor<T> extends AbstractFactor<T> {
     public void setMaxOperator(MaxOperator maxOperator) {
         super.setMaxOperator(maxOperator);
         tracker = new BestValuesTracker<T>(maxOperator);
+    }
+
+    @Override
+    protected double eval(Map<T, Boolean> values) {
+        int nActive = 0;
+        for (T neighbor : getNeighbors()) {
+            if (values.get(neighbor)) {
+                nActive++;
+            }
+        }
+        return (nActive == 1) ? 0 : getMaxOperator().getWorstValue();
     }
 
     @Override

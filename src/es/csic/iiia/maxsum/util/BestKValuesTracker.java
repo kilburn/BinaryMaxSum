@@ -39,6 +39,7 @@ package es.csic.iiia.maxsum.util;
 import es.csic.iiia.maxsum.MaxOperator;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -135,26 +136,6 @@ public class BestKValuesTracker<T> {
     }
 
     /**
-     * Get the element with a best value between all tracked ones.
-     *
-     * @return element with best value.
-     */
-    public T getBest() {
-        return elements.first().element;
-    }
-
-    /**
-     * Get the value of the best element between all tracked ones. Alternatively, this is the
-     * maximum (according to our operator) between all tracked values.
-     *
-     * @see MaxOperator
-     * @return best value (maximum) between all tracked ones.
-     */
-    public double getBestValue() {
-        return elements.first().value;
-    }
-
-    /**
      * Track an element and its associated value.
      *
      * @param element element to track.
@@ -163,7 +144,7 @@ public class BestKValuesTracker<T> {
     public void track(T element, double value) {
         LOG.log(Level.FINEST, "BestKValues tracking element {0} with value {1}",
                 new Object[]{element, value});
-        elements.add(new Entry(element, value));
+        elements.add(new Map.Entry<T, Double>(element, value));
     }
 
     @Override
@@ -172,7 +153,7 @@ public class BestKValuesTracker<T> {
                 .append(elements.capacity)
                 .append("](");
         String separator = "";
-        for (Entry e : elements) {
+        for (Map.Entry<T, Double> e : elements) {
             buf.append(separator).append(e);
             separator = ", ";
         }
@@ -180,6 +161,7 @@ public class BestKValuesTracker<T> {
         return buf.toString();
     }
 
+    /*
     private class Entry {
         public final T element;
         public final double value;
@@ -215,12 +197,19 @@ public class BestKValuesTracker<T> {
             return true;
         }
 
-    }
+    }*/
 
-    private class EntryComparator implements Comparator<Entry> {
+    private class EntryComparator<T> implements Comparator<Map.Entry<T, Double>> {
+
+        private final MaxOperator operator;
+
+        public EntryComparator(MaxOperator operator) {
+            this.operator = operator;
+        }
+
         @Override
-        public int compare(Entry o1, Entry o2) {
-            int result = -operator.compare(o1.value, o2.value);
+        public int compare(Map.Entry<T, Double> o1, Map.Entry<T, Double> o2) {
+            int result = -operator.compare(o1.getValue(), o2.getValue());
             if (result == 0) {
                 result = o1.hashCode() > o2.hashCode() ? 1 : -1;
             }

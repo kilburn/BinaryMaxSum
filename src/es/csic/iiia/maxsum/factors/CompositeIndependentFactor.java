@@ -40,6 +40,7 @@ import es.csic.iiia.maxsum.Factor;
 import es.csic.iiia.maxsum.CommunicationAdapter;
 import es.csic.iiia.maxsum.MaxOperator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This factor composes (sums) an independent cost/utility factor with some
@@ -49,6 +50,7 @@ import java.util.List;
  *
  * @param <T> Type of the factor's identity.
  * @author Marc Pujol <mpujol@iiia.csic.es>
+ * @deprecated
  */
 public class CompositeIndependentFactor<T> extends AbstractFactor<T>
     implements CommunicationAdapter<T>
@@ -142,6 +144,11 @@ public class CompositeIndependentFactor<T> extends AbstractFactor<T>
     @Override
     public void send(double message, T recipient) {
         throw new UnsupportedOperationException("This method should never be called.");
+    }
+
+    @Override
+    protected double eval(Map<T, Boolean> values) {
+        return independentFactor.evaluate(values) + innerFactor.evaluate(values);
     }
 
     @Override
