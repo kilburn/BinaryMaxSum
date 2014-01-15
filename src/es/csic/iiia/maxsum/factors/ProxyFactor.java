@@ -76,7 +76,7 @@ public abstract class ProxyFactor<T> implements Factor<T> {
 
     /**
      * Get the internal factor we are proxying to/from.
-
+     *
      * @return the factor we are proxying to/from.
      */
     public Factor<T> getInnerFactor() {
