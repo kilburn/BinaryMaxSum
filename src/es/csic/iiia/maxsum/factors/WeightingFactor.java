@@ -95,6 +95,17 @@ public class WeightingFactor<T> extends ProxyFactor<T> {
     }
 
     @Override
+    public double evaluate(Map<T, Boolean> values) {
+        double value = super.evaluate(values);
+        for (T neighbor : getNeighbors()) {
+            if (values.get(neighbor)) {
+                value += getPotential(neighbor);
+            }
+        }
+        return value;
+    }
+
+    @Override
     public void receive(double message, T sender) {
         super.receive(message + getPotential(sender), sender);
     }
