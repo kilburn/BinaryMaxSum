@@ -97,9 +97,9 @@ public class StandardFactor<T> extends AbstractFactor<T> {
         final int nNeighbors = getNeighbors().size();
 
         int index = 0;
-        for (int i=nNeighbors-1; i>=0; i--) {
+        for (int i=0; i<nNeighbors; i++) {
             if (values.get(neighbors.get(i))) {
-                index |= 1 << i;
+                index |= 1 << (nNeighbors-i-1);
             }
         }
 
