@@ -42,6 +42,7 @@ import es.csic.iiia.maxsum.MaxOperator;
 import es.csic.iiia.maxsum.Maximize;
 import es.csic.iiia.maxsum.Minimize;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
@@ -72,7 +73,7 @@ public abstract class CrossFactorTestAbstract {
     private final int MAX_NEIGHBORS = 10;
 
     /** Generator of random values */
-    private Random generator = new Random();
+    private Random generator = new Random(0L);
 
     /**
      * Builds the factors to cross-test.
@@ -122,7 +123,7 @@ public abstract class CrossFactorTestAbstract {
     }
 
     @Test
-    public void crossTest() {
+    public void crossTestMessages() {
         for (int i=0; i<NUMBER_OF_RUNS; i++) {
             int len = getRandomIntValue(MAX_NEIGHBORS) + 1;
             double[] values = new double[len];
@@ -134,6 +135,43 @@ public abstract class CrossFactorTestAbstract {
             runAgainstGeneric(new Maximize(), values);
             runAgainstGeneric(new Minimize(), values);
         }
+    }
+
+    @Test
+    public void crossTestEvaluation() {
+        for (int i=0; i<NUMBER_OF_RUNS; i++) {
+            int len = getRandomIntValue(MAX_NEIGHBORS) + 1;
+            boolean[] values = new boolean[len];
+            for (int j=0; j<len; j++) {
+                values[j] = generator.nextDouble() > 0.5;
+            }
+            LOG.log(Level.FINEST, "Values: {0}", Arrays.toString(values));
+
+            testEvaluation(new Maximize(), values);
+            testEvaluation(new Minimize(), values);
+        }
+    }
+
+    private void testEvaluation(MaxOperator op, boolean[] values) {
+        final int nNeighbors = values.length;
+
+        // Create the neighbors and value map
+        HashMap<Factor, Boolean> valuesMap = new HashMap<Factor, Boolean>();
+        Factor[] neighbors = new Factor[nNeighbors];
+        for (int i=0; i<nNeighbors; i++) {
+            neighbors[i] = mock(Factor.class);
+            neighbors[i].setIdentity(neighbors[i]);
+            valuesMap.put(neighbors[i], values[i]);
+        }
+
+        // Create the factors to test (one of the specific type being tested, and a standard one)
+        Factor[] factors = buildFactors(op, neighbors);
+        Factor<Factor> testedSpecific = factors[0];
+        Factor<Factor> testedGeneric = factors[1];
+
+        final double expected = testedGeneric.evaluate(valuesMap);
+        final double actual = testedSpecific.evaluate(valuesMap);
+        assertEquals("Factor evaluation differs", expected, actual, DELTA);
     }
 
     /**
