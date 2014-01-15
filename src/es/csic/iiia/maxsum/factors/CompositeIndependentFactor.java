@@ -77,6 +77,12 @@ public class CompositeIndependentFactor<T> extends AbstractFactor<T>
         innerFactor.setCommunicationAdapter(this);
         innerFactor.setMaxOperator(getMaxOperator());
         innerFactor.setIdentity(getIdentity());
+
+        if (independentFactor != null) {
+            for (T neighbor : independentFactor.getNeighbors()) {
+                innerFactor.addNeighbor(neighbor);
+            }
+        }
     }
 
     /**
@@ -93,6 +99,11 @@ public class CompositeIndependentFactor<T> extends AbstractFactor<T>
      */
     public void setIndependentFactor(IndependentFactor<T> independentFactor) {
         this.independentFactor = independentFactor;
+        if (innerFactor != null) {
+            for (T neighbor : innerFactor.getNeighbors()) {
+                independentFactor.addNeighbor(neighbor);
+            }
+        }
     }
 
     @Override
@@ -121,6 +132,9 @@ public class CompositeIndependentFactor<T> extends AbstractFactor<T>
         if (innerFactor != null) {
             innerFactor.setIdentity(identity);
         }
+        if (independentFactor != null) {
+            independentFactor.setIdentity(identity);
+        }
     }
 
     @Override
@@ -129,16 +143,27 @@ public class CompositeIndependentFactor<T> extends AbstractFactor<T>
         if (innerFactor != null) {
             innerFactor.setMaxOperator(maxOperator);
         }
+        if (independentFactor != null) {
+            independentFactor.setMaxOperator(maxOperator);
+        }
     }
 
     @Override
     public void addNeighbor(T factor) {
-        innerFactor.addNeighbor(factor);
+        if (innerFactor != null) {
+            innerFactor.addNeighbor(factor);
+        }
+        if (independentFactor != null) {
+            independentFactor.addNeighbor(factor);
+        }
     }
 
     @Override
     public List<T> getNeighbors() {
-        return innerFactor.getNeighbors();
+        if (innerFactor != null) {
+            return innerFactor.getNeighbors();
+        }
+        return independentFactor.getNeighbors();
     }
 
     @Override
