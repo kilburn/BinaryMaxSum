@@ -36,8 +36,6 @@
  */
 package es.csic.iiia.maxsum.factors;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import es.csic.iiia.maxsum.MaxOperator;
@@ -56,14 +54,7 @@ import es.csic.iiia.maxsum.MaxOperator;
  * @author Toni Penya-Alba <tonipenya@iiia.csic.es>
  */
 
-public class TwoSidedReserveFactor<T> extends AbstractFactor<T> {
-
-    private int nElementsA = -1;
-    private long constraintChecks;
-
-    public void setNElementsA(int nElements) {
-        nElementsA = nElements;
-    }
+public class TwoSidedReserveFactor<T> extends AbstractTwoSidedFactor<T> {
 
     @Override
     protected long iter() {
@@ -141,36 +132,6 @@ public class TwoSidedReserveFactor<T> extends AbstractFactor<T> {
         return constraintChecks;
     }
 
-    private List<Pair> getSortedSetAPairs() {
-        List<Pair> setAPairs = new ArrayList<Pair>(nElementsA);
-
-        for (int i = 0; i < nElementsA; i++) {
-            T neighbor = getNeighbors().get(i);
-            setAPairs.add(new Pair(neighbor, getMessage(neighbor)));
-        }
-        constraintChecks += nElementsA;
-
-        Collections.sort(setAPairs, Collections.reverseOrder());
-
-        return setAPairs;
-    }
-
-    private List<Pair> getSortedSetBPairs() {
-        final int nNeighbors = getNeighbors().size();
-        final int nElementsB = nNeighbors - nElementsA;
-        List<Pair> setBPairs = new ArrayList<Pair>(nElementsB);
-
-        for (int i = nElementsA; i < nNeighbors; i++) {
-            T neighbor = getNeighbors().get(i);
-            setBPairs.add(new Pair(neighbor, getMessage(neighbor)));
-        }
-        constraintChecks += nElementsB;
-
-        Collections.sort(setBPairs, Collections.reverseOrder());
-
-        return setBPairs;
-    }
-
     private int getTheta(List<Pair> setAPairs, List<Pair> setBPairs) {
         final MaxOperator op = getMaxOperator();
         final int nElementsB = setBPairs.size();
@@ -202,23 +163,6 @@ public class TwoSidedReserveFactor<T> extends AbstractFactor<T> {
         constraintChecks += nPositive;
 
         return nPositive;
-    }
-
-    private class Pair implements Comparable<Pair> {
-        public final T id;
-        public final Double value;
-
-        public Pair(T id, Double value) {
-            this.id = id;
-            this.value = value;
-        }
-
-        @Override
-        public int compareTo(Pair p) {
-            constraintChecks++;
-            return getMaxOperator().compare(value, p.value);
-        }
-
     }
 
 }
