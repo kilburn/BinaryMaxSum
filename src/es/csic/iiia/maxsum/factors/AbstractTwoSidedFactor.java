@@ -36,24 +36,33 @@
  */
 package es.csic.iiia.maxsum.factors;
 
+import es.csic.iiia.maxsum.util.NeighborComparator;
+import es.csic.iiia.maxsum.util.NeighborValue;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Abstract class for two-sided factors. 
- * 
- * The neighbors in two-sided factors can be grouped in two sets (A and B). 
- * This class keeps the number of elements in the first set and provides methods 
- * to access the sorted messages for each set. 
- * 
+ * Abstract class for two-sided factors.
+ *
+ * The neighbors in two-sided factors can be grouped in two sets (A and B).
+ * This class keeps the number of elements in the first set and provides methods
+ * to access the sorted messages for each set.
+ *
  * @author Toni Penya-Alba <tonipenya@iiia.csic.es>
+ * @param <T> Type of the factor's identity.
  */
-
 public abstract class AbstractTwoSidedFactor<T> extends AbstractFactor<T> {
 
+    /**
+     * Number of elements in set A.
+     */
     protected int nElementsA = -1;
+
+    /**
+     * Accumulator of constraint checks
+     */
     protected long constraintChecks;
 
     /**
@@ -67,20 +76,22 @@ public abstract class AbstractTwoSidedFactor<T> extends AbstractFactor<T> {
     /**
      * Get a list of <neighbor, message value> pairs for the factors in set A.
      * The list is sorted by the value of the last message received.
-     * 
-     * @return <em>pair list</em> A list of <neighbor, message value> pairs for 
+     *
+     * @return <em>pair list</em> A list of <neighbor, message value> pairs for
      * the factors in set A.
      */
-    protected List<Pair> getSortedSetAPairs() {
-        List<Pair> setAPairs = new ArrayList<Pair>(nElementsA);
+    protected List<NeighborValue<T>> getSortedSetAPairs() {
+        List<NeighborValue<T>> setAPairs = new ArrayList<NeighborValue<T>>(nElementsA);
 
         for (int i = 0; i < nElementsA; i++) {
             T neighbor = getNeighbors().get(i);
-            setAPairs.add(new Pair(neighbor, getMessage(neighbor)));
+            setAPairs.add(new NeighborValue<T>(neighbor, getMessage(neighbor)));
         }
         constraintChecks += nElementsA;
 
-        Collections.sort(setAPairs, Collections.reverseOrder());
+        NeighborComparator<T> cmp = new NeighborComparator<T>(getMaxOperator());
+        Collections.sort(setAPairs, Collections.reverseOrder(cmp));
+        constraintChecks += cmp.getConstraintChecks();
 
         return setAPairs;
     }
@@ -88,77 +99,55 @@ public abstract class AbstractTwoSidedFactor<T> extends AbstractFactor<T> {
     /**
      * Get a list of <neighbor, message value> pairs for the factors in set B.
      * The list is sorted by the value of the last message received.
-     * 
-     * @return <em>pair list</em> B list of <neighbor, message value> pairs for 
+     *
+     * @return <em>pair list</em> B list of <neighbor, message value> pairs for
      * the factors in set B.
      */
-    protected List<Pair> getSortedSetBPairs() {
+    protected List<NeighborValue<T>> getSortedSetBPairs() {
         final int nNeighbors = getNeighbors().size();
         final int nElementsB = nNeighbors - nElementsA;
-        List<Pair> setBPairs = new ArrayList<Pair>(nElementsB);
+        List<NeighborValue<T>> setBPairs = new ArrayList<NeighborValue<T>>(nElementsB);
 
         for (int i = nElementsA; i < nNeighbors; i++) {
             T neighbor = getNeighbors().get(i);
-            setBPairs.add(new Pair(neighbor, getMessage(neighbor)));
+            setBPairs.add(new NeighborValue<T>(neighbor, getMessage(neighbor)));
         }
         constraintChecks += nElementsB;
 
-        Collections.sort(setBPairs, Collections.reverseOrder());
+        NeighborComparator<T> cmp = new NeighborComparator<T>(getMaxOperator());
+        Collections.sort(setBPairs, Collections.reverseOrder(cmp));
+        constraintChecks += cmp.getConstraintChecks();
 
         return setBPairs;
     }
-    
+
     /**
-     * Get the difference between the number of active neighbors in set A and 
-     * the number of active neighbors in set B. 
+     * Get the difference between the number of active neighbors in set A and
+     * the number of active neighbors in set B.
      * That is, |active(A)| - |active(B)|.
-     * 
+     *
      * @param values a map <neighbor, boolean> describing the active state of
      *  each neighbor.
      * @return <em>reserve</em> the difference between the number of active
-     *  neighbors in sets A and B. 
+     *  neighbors in sets A and B.
      */
     protected int getReserve(Map<T, Boolean> values) {
         int reserve = 0;
-        
+
         for(int i = 0; i < nElementsA; i++) {
             if (values.get(getNeighbors().get(i))) {
                 reserve++;
-            }            
+            }
         }
-        
+
         final int nNeighbors = getNeighbors().size();
         for(int i = nElementsA; i < nNeighbors; i++) {
             if (values.get(getNeighbors().get(i))) {
                 reserve--;
-            }            
+            }
         }
-        
+
         return reserve;
-    }
-
-    /**
-     * Class representing a pair <neighbor, value> implementing the Comparable 
-     * interface. The comparison is made between the values.
-     * 
-     * @author Toni Penya-Alba <tonipenya@iiia.csic.es>
-     *
-     */
-    protected class Pair implements Comparable<Pair> {
-        public final T id;
-        public final Double value;
-
-        public Pair(T id, Double value) {
-            this.id = id;
-            this.value = value;
-        }
-
-        @Override
-        public int compareTo(Pair p) {
-            constraintChecks++;
-            return getMaxOperator().compare(value, p.value);
-        }
-
     }
 
 }

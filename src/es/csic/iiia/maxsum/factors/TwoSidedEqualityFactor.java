@@ -40,10 +40,11 @@ import java.util.List;
 import java.util.Map;
 
 import es.csic.iiia.maxsum.MaxOperator;
+import es.csic.iiia.maxsum.util.NeighborValue;
 
 /**
  * Max-sum "Two-sided equality" factor.
- * 
+ *
  * Given two sets of neighbors A = {a_1, ..., a_p} and B = {b_1, ..., b_q}, this
  * factor tries to ensure that there are the same number of neighbors from the
  * first set chosen than from the second one. That is, f(a_1, ..., a_p, b_1,
@@ -51,10 +52,10 @@ import es.csic.iiia.maxsum.MaxOperator;
  * <p/>
  * Outgoing messages are computed in <em>O(n log(n))</em> time. Where <em>n</em>
  * is the number of elements in the biggest set. That is, n = max(p, q).
- * 
+ *
+ * @param <T> Type of the factor's identity.
  * @author Toni Penya-Alba <tonipenya@iiia.csic.es>
  */
-
 public class TwoSidedEqualityFactor<T> extends AbstractTwoSidedFactor<T> {
 
     @Override
@@ -71,55 +72,55 @@ public class TwoSidedEqualityFactor<T> extends AbstractTwoSidedFactor<T> {
 
             return nNeighbors;
         }
-        
-        final List<Pair> setAPairs = getSortedSetAPairs();
-        final List<Pair> setBPairs = getSortedSetBPairs();
+
+        final List<NeighborValue<T>> setAPairs = getSortedSetAPairs();
+        final List<NeighborValue<T>> setBPairs = getSortedSetBPairs();
 
         final int eta = getEta(setAPairs, setBPairs);
 
-        final double nuAEta = (eta == 0) ? -op.getWorstValue() : setAPairs.get(eta-1).value; 
-        final double nuAEtaPlusOne = (nElementsA > eta) ? setAPairs.get(eta).value : op.getWorstValue(); 
-        final double nuBEta = (eta == 0) ? -op.getWorstValue() : setBPairs.get(eta-1).value; 
-        final double nuBEtaPlusOne = (nElementsB > eta) ? setBPairs.get(eta).value : op.getWorstValue(); 
-        
+        final double nuAEta = (eta == 0) ? -op.getWorstValue() : setAPairs.get(eta-1).value;
+        final double nuAEtaPlusOne = (nElementsA > eta) ? setAPairs.get(eta).value : op.getWorstValue();
+        final double nuBEta = (eta == 0) ? -op.getWorstValue() : setBPairs.get(eta-1).value;
+        final double nuBEtaPlusOne = (nElementsB > eta) ? setBPairs.get(eta).value : op.getWorstValue();
+
         final double tauPlus = -op.max(-nuBEta, nuAEtaPlusOne);
         final double tauMinus = op.max(-nuAEta, nuBEtaPlusOne);
-        
+
         constraintChecks += 6;
-        
+
         // active sellers
         for (int i = 0; i < eta; i++) {
-            send(tauPlus, setAPairs.get(i).id);
+            send(tauPlus, setAPairs.get(i).neighbor);
         }
 
         // inactive sellers
         for (int i = eta; i < nElementsA; i++) {
-            send(tauMinus, setAPairs.get(i).id);
+            send(tauMinus, setAPairs.get(i).neighbor);
         }
 
         // active buyers
         for (int i = 0; i < eta; i++) {
-            send(-tauMinus, setBPairs.get(i).id);
+            send(-tauMinus, setBPairs.get(i).neighbor);
         }
 
         // inactive buyers
         for (int i = eta; i < nElementsB; i++) {
-            send(-tauPlus, setBPairs.get(i).id);
+            send(-tauPlus, setBPairs.get(i).neighbor);
         }
-        
+
         constraintChecks += nNeighbors;
 
         return constraintChecks;
     }
-    
+
     @Override
     public double eval(Map<T, Boolean> values) {
         final int reserve = getReserve(values);
-        
+
         return (reserve == 0) ? 0 : getMaxOperator().getWorstValue();
     }
 
-    private int getEta(List<Pair> setAPairs, List<Pair> setBPairs) {
+    private int getEta(List<NeighborValue<T>> setAPairs, List<NeighborValue<T>> setBPairs) {
         final MaxOperator op = getMaxOperator();
         final int nElementsB = setBPairs.size();
         final int n = Math.min(nElementsA, nElementsB);

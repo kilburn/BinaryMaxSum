@@ -47,6 +47,7 @@ import java.util.Map;
  * another wrapped factor.
  *
  * @author Marc Pujol <mpujol@iiia.csic.es>
+ * @param <T> Type of the factor's identity.
  */
 public abstract class ProxyFactor<T> implements Factor<T> {
 
@@ -75,8 +76,8 @@ public abstract class ProxyFactor<T> implements Factor<T> {
 
     /**
      * Get the internal factor we are proxying to/from.
-     *
-     * @return
+
+     * @return the factor we are proxying to/from.
      */
     public Factor<T> getInnerFactor() {
         return innerFactor;

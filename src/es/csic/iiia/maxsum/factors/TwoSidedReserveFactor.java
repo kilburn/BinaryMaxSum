@@ -40,10 +40,11 @@ import java.util.List;
 import java.util.Map;
 
 import es.csic.iiia.maxsum.MaxOperator;
+import es.csic.iiia.maxsum.util.NeighborValue;
 
 /**
  * Max-sum "Two-sided reserve" factor.
- * 
+ *
  * Given two sets of neighbors A = {a_1, ..., a_p} and B = {b_1, ..., b_q}, this
  * factor tries to ensure that there are at least the same number of neighbors
  * from the first set chosen than from the second one. That is, f(a_1, ..., a_p,
@@ -51,10 +52,10 @@ import es.csic.iiia.maxsum.MaxOperator;
  * <p/>
  * Outgoing messages are computed in <em>O(n log(n))</em> time. Where <em>n</em>
  * is the number of elements in the biggest set. That is, n = max(p, q).
- * 
+ *
+ * @param <T> Type of the factor's identity.
  * @author Toni Penya-Alba <tonipenya@iiia.csic.es>
  */
-
 public class TwoSidedReserveFactor<T> extends AbstractTwoSidedFactor<T> {
 
     @Override
@@ -72,7 +73,7 @@ public class TwoSidedReserveFactor<T> extends AbstractTwoSidedFactor<T> {
             return nNeighbors;
         }
 
-        // Optimization. If there are no elements in set B, messages for the 
+        // Optimization. If there are no elements in set B, messages for the
         // members in set A is always 0.
         if (nElementsB == 0) {
             for (T neigh : getNeighbors()) {
@@ -82,8 +83,8 @@ public class TwoSidedReserveFactor<T> extends AbstractTwoSidedFactor<T> {
             return nNeighbors;
         }
 
-        final List<Pair> setAPairs = getSortedSetAPairs();
-        final List<Pair> setBPairs = getSortedSetBPairs();
+        final List<NeighborValue<T>> setAPairs = getSortedSetAPairs();
+        final List<NeighborValue<T>> setBPairs = getSortedSetBPairs();
 
         final int theta = getTheta(setAPairs, setBPairs);
 
@@ -110,37 +111,37 @@ public class TwoSidedReserveFactor<T> extends AbstractTwoSidedFactor<T> {
             final int nActiveA = Math.max(theta, nPositiveA);
             // Send -A to active 'a's
             for (int i = 0; i < nActiveA; i++) {
-                send(-A, setAPairs.get(i).id);
+                send(-A, setAPairs.get(i).neighbor);
             }
 
             // Send B to inactive 'a's
             for (int i = nActiveA; i < nElementsA; i++) {
-                send(B, setAPairs.get(i).id);
+                send(B, setAPairs.get(i).neighbor);
             }
 
             // Send -B to active 'b's
             for (int i = 0; i < theta; i++) {
-                send(-B, setBPairs.get(i).id);
+                send(-B, setBPairs.get(i).neighbor);
             }
 
             // Send A to inactive 'b's
             for (int i = theta; i < nElementsB; i++) {
-                send(A, setBPairs.get(i).id);
+                send(A, setBPairs.get(i).neighbor);
             }
         }
         constraintChecks += nNeighbors;
 
         return constraintChecks;
     }
-    
+
     @Override
     public double eval(Map<T, Boolean> values) {
         final int reserve = getReserve(values);
-        
+
         return (reserve >= 0) ? 0 : getMaxOperator().getWorstValue();
     }
-    
-    private int getTheta(List<Pair> setAPairs, List<Pair> setBPairs) {
+
+    private int getTheta(List<NeighborValue<T>> setAPairs, List<NeighborValue<T>> setBPairs) {
         final MaxOperator op = getMaxOperator();
         final int nElementsB = setBPairs.size();
         final int n = Math.min(nElementsA, nElementsB);
@@ -158,7 +159,7 @@ public class TwoSidedReserveFactor<T> extends AbstractTwoSidedFactor<T> {
         return theta;
     }
 
-    private int getNPositive(List<Pair> pairs) {
+    private int getNPositive(List<NeighborValue<T>> pairs) {
         final int pairsLength = pairs.size();
         final MaxOperator op = getMaxOperator();
 
