@@ -1,7 +1,7 @@
 /*
  * Software License Agreement (BSD License)
  *
- * Copyright 2013 Marc Pujol <mpujol@iiia.csic.es>.
+ * Copyright 2014 Marc Pujol <mpujol@iiia.csic.es>.
  *
  * Redistribution and use of this software in source and binary forms, with or
  * without modification, are permitted provided that the following conditions
@@ -34,56 +34,46 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package es.csic.iiia.maxsum.factors;
-
-import es.csic.iiia.maxsum.Factor;
-import es.csic.iiia.maxsum.MaxOperator;
-import java.util.Arrays;
+package es.csic.iiia.maxsum.util;
 
 /**
- * Tests the {@link EqualityFactor} HOP by checking the computed messages against those computed
- * by a {@link StandardFactor}.
  *
  * @author Marc Pujol <mpujol@iiia.csic.es>
  */
-@SuppressWarnings({"unchecked","rawtypes"})
-public class EqualityFactorTest extends CrossFactorTestAbstract {
+public class NeighborValue<T> {
+
+    public final T element;
+    public final double value;
+
+    public NeighborValue(T element, double value) {
+        this.element = element;
+        this.value = value;
+    }
 
     @Override
-    public Factor[] buildFactors(MaxOperator op, Factor[] neighbors) {
-        return new Factor[]{
-            buildSpecificFactor(op, neighbors),
-            buildStandardFactor(op, neighbors),
-        };
+    public String toString() {
+        return element + ":" + value;
     }
 
-    private Factor buildSpecificFactor(MaxOperator op, Factor[] neighbors) {
-        EqualityFactor factor = new EqualityFactor();
-        factor.setMaxOperator(op);
-        link(factor, neighbors);
-        return factor;
+    @Override
+    public int hashCode() {
+        return (this.element != null ? this.element.hashCode() : 0);
     }
 
-    private Factor buildStandardFactor(MaxOperator op, Factor[] neighbors) {
-        StandardFactor factor = new StandardFactor();
-        factor.setMaxOperator(op);
-        link(factor, neighbors);
-        factor.setPotential(buildPotential(op, neighbors));
-        return factor;
-    }
-
-    public double[] buildPotential(MaxOperator op, Factor[] neighbors) {
-        final int nNeighbors = neighbors.length;
-
-        // Initialize the cost/utilites array with "no goods"
-        double[] values = new double[1 << nNeighbors];
-        Arrays.fill(values, op.getWorstValue());
-
-        // Now set the rows with either no or all variables active to "0"
-        values[0] = 0;
-        values[values.length-1] = 0;
-
-        return values;
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        @SuppressWarnings("unchecked")
+        final NeighborValue<T> other = (NeighborValue<T>) obj;
+        if (this.element != other.element && (this.element == null || !this.element.equals(other.element))) {
+            return false;
+        }
+        return true;
     }
 
 }

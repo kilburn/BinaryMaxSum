@@ -50,6 +50,7 @@ import org.junit.Test;
  *
  * @author Marc Pujol <mpujol@iiia.csic.es>
  */
+@SuppressWarnings({"unchecked","rawtypes"})
 public class AllActiveIncentiveFactorTest extends CrossFactorTestAbstract {
 
     private final double DELTA = 0.0001d;

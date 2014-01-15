@@ -39,6 +39,7 @@ package es.csic.iiia.maxsum.factors;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Abstract class for two-sided factors. 
@@ -46,7 +47,7 @@ import java.util.List;
  * The neighbors in two-sided factors can be grouped in two sets (A and B). 
  * This class keeps the number of elements in the first set and provides methods 
  * to access the sorted messages for each set. 
- *  * 
+ * 
  * @author Toni Penya-Alba <tonipenya@iiia.csic.es>
  */
 
@@ -105,6 +106,35 @@ public abstract class AbstractTwoSidedFactor<T> extends AbstractFactor<T> {
         Collections.sort(setBPairs, Collections.reverseOrder());
 
         return setBPairs;
+    }
+    
+    /**
+     * Get the difference between the number of active neighbors in set A and 
+     * the number of active neighbors in set B. 
+     * That is, |active(A)| - |active(B)|.
+     * 
+     * @param values a map <neighbor, boolean> describing the active state of
+     *  each neighbor.
+     * @return <em>reserve</em> the difference between the number of active
+     *  neighbors in sets A and B. 
+     */
+    protected int getReserve(Map<T, Boolean> values) {
+        int reserve = 0;
+        
+        for(int i = 0; i < nElementsA; i++) {
+            if (values.get(getNeighbors().get(i))) {
+                reserve++;
+            }            
+        }
+        
+        final int nNeighbors = getNeighbors().size();
+        for(int i = nElementsA; i < nNeighbors; i++) {
+            if (values.get(getNeighbors().get(i))) {
+                reserve--;
+            }            
+        }
+        
+        return reserve;
     }
 
     /**

@@ -38,6 +38,7 @@ package es.csic.iiia.maxsum.factors;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Implementation of a standard (binary) max-sum factor.
@@ -88,6 +89,21 @@ public class StandardFactor<T> extends AbstractFactor<T> {
      */
     public void setPotential(double[] values) {
         this.potential = new TabularPotential(values);
+    }
+
+    @Override
+    protected double eval(Map<T, Boolean> values) {
+        final List<T> neighbors = getNeighbors();
+        final int nNeighbors = getNeighbors().size();
+
+        int index = 0;
+        for (int i=0; i<nNeighbors; i++) {
+            if (values.get(neighbors.get(i))) {
+                index |= 1 << (nNeighbors-i-1);
+            }
+        }
+
+        return potential.values[index];
     }
 
     @Override

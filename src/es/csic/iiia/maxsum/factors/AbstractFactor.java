@@ -119,6 +119,24 @@ public abstract class AbstractFactor<T> implements Factor<T> {
      */
     protected abstract long iter();
 
+    /**
+     * Evaluate this factor given the neighbor's values.
+     *
+     * @param values map of value for each neighbor.
+     * @return cost/utility of this factor given the neighbor's values.
+     */
+    protected abstract double eval(Map<T, Boolean> values);
+
+    @Override
+    public final double evaluate(Map<T, Boolean> values) {
+        for (T neighbor : getNeighbors()) {
+            if (!values.containsKey(neighbor)) {
+                throw new IllegalArgumentException("Missing assignment for neighbor " + neighbor);
+            }
+        }
+        return eval(values);
+    }
+
     @Override
     public final long run() {
         long ccs = iter();

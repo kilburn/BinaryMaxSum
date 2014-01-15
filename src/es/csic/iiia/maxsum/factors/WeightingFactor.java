@@ -1,7 +1,7 @@
 /*
  * Software License Agreement (BSD License)
  *
- * Copyright 2013 Marc Pujol <mpujol@iiia.csic.es>.
+ * Copyright 2014 Marc Pujol <mpujol@iiia.csic.es>.
  *
  * Redistribution and use of this software in source and binary forms, with or
  * without modification, are permitted provided that the following conditions
@@ -36,67 +36,85 @@
  */
 package es.csic.iiia.maxsum.factors;
 
-import es.csic.iiia.maxsum.util.BestValuesTracker;
-import es.csic.iiia.maxsum.MaxOperator;
+import es.csic.iiia.maxsum.Factor;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Max-sum selector factor.
  *
- * This factor tries to ensure that only one of its neighboring variables are
- * active at the same time.
- * <p/>
- * Outgoing messages are computed in <em>O(n)</em> time, where <em>n</em> is the
- * total number of variables connected to this factor.
- *
- * @param <T> Type of the factor's identity.
  * @author Marc Pujol <mpujol@iiia.csic.es>
  */
-public class SelectorFactor<T> extends AbstractFactor<T> {
+public class WeightingFactor<T> extends ProxyFactor<T> {
 
-    private BestValuesTracker<T> tracker;
+    private Map<T, Double> potential = new HashMap<T, Double>();
 
-    @Override
-    public void setMaxOperator(MaxOperator maxOperator) {
-        super.setMaxOperator(maxOperator);
-        tracker = new BestValuesTracker<T>(maxOperator);
-    }
-
-    @Override
-    protected double eval(Map<T, Boolean> values) {
-        int nActive = 0;
-        for (T neighbor : getNeighbors()) {
-            if (values.get(neighbor)) {
-                nActive++;
-            }
-        }
-        return (nActive == 1) ? 0 : getMaxOperator().getWorstValue();
-    }
-
-    @Override
-    public long iter() {
-        // Compute the minimums
-        tracker.reset();
-        for (T f : getNeighbors()) {
-            tracker.track(f, getMessage(f));
-        }
-
-        // Send messages
-        for (T f : getNeighbors()) {
-            final double value = - tracker.getComplementary(f);
-            send(value, f);
-        }
-
-        return getNeighbors().size()*2;
+    public WeightingFactor(Factor<T> innerFactor) {
+        super(innerFactor);
     }
 
     /**
-     * Pick the "winning" neighboring factor.
-     *
-     * @return the best fitting neighbor factor.
+     * Remove all potential costs.
      */
-    public T select() {
-        return tracker.getBest();
+    public void clearPotentials() {
+        potential.clear();
     }
+
+    /**
+     * Get the cost/utility of activating the variable shared with the given
+     * neighbor.
+     *
+     * @param neighbor neighbor to consider
+     * @return cost of activating the given neighbor
+     */
+    public double getPotential(T neighbor) {
+        if (!potential.containsKey(neighbor)) {
+            throw new IllegalArgumentException("Requested potential for a non-existant neighbor");
+        }
+        return potential.get(neighbor);
+    }
+
+    /**
+     * Remove the cost associated to activating the given factor.
+     *
+     * @param neighbor factor to consider
+     * @return previous cost of activating the given factor
+     */
+    public Double removePotential(T neighbor) {
+        return potential.remove(neighbor);
+    }
+
+    /**
+     * Set the independent cost of activating the variable that corresponds to
+     * the given neighbor.
+     *
+     * @param neighbor
+     * @param value cost/utility of activating this neighbor
+     */
+    public void setPotential(T neighbor, double value) {
+        potential.put(neighbor, value);
+    }
+
+    @Override
+    public double evaluate(Map<T, Boolean> values) {
+        double value = super.evaluate(values);
+        for (T neighbor : getNeighbors()) {
+            if (values.get(neighbor)) {
+                value += getPotential(neighbor);
+            }
+        }
+        return value;
+    }
+
+    @Override
+    public void receive(double message, T sender) {
+        super.receive(message + getPotential(sender), sender);
+    }
+
+    @Override
+    public void send(double message, T recipient) {
+        super.send(message + getPotential(recipient), recipient);
+    }
+
+
 
 }

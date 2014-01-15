@@ -41,6 +41,7 @@ import es.csic.iiia.maxsum.MaxOperator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -68,6 +69,17 @@ public class CardinalityFactor<T> extends AbstractFactor<T> {
      */
     public void setFunction(CardinalityFunction f) {
         function = f;
+    }
+
+    @Override
+    protected double eval(Map<T, Boolean> values) {
+        int nActive = 0;
+        for (T neighbor : getNeighbors()) {
+            if (values.get(neighbor)) {
+                nActive++;
+            }
+        }
+        return function.getCost(nActive);
     }
 
     @Override

@@ -1,7 +1,7 @@
 /*
  * Software License Agreement (BSD License)
  *
- * Copyright 2013 Marc Pujol <mpujol@iiia.csic.es>.
+ * Copyright 2014 Marc Pujol <mpujol@iiia.csic.es>.
  *
  * Redistribution and use of this software in source and binary forms, with or
  * without modification, are permitted provided that the following conditions
@@ -34,56 +34,30 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package es.csic.iiia.maxsum.factors;
+package es.csic.iiia.maxsum.util;
 
-import es.csic.iiia.maxsum.Factor;
 import es.csic.iiia.maxsum.MaxOperator;
-import java.util.Arrays;
+import java.util.Comparator;
 
 /**
- * Tests the {@link EqualityFactor} HOP by checking the computed messages against those computed
- * by a {@link StandardFactor}.
+ * Comparator that compares {@link NeighborValue} entries according a {@link MaxOperator}.
  *
  * @author Marc Pujol <mpujol@iiia.csic.es>
  */
-@SuppressWarnings({"unchecked","rawtypes"})
-public class EqualityFactorTest extends CrossFactorTestAbstract {
+public class NeighborComparator<T> implements Comparator<NeighborValue<T>> {
+
+    private final MaxOperator operator;
+
+    public NeighborComparator(MaxOperator operator) {
+        this.operator = operator;
+    }
 
     @Override
-    public Factor[] buildFactors(MaxOperator op, Factor[] neighbors) {
-        return new Factor[]{
-            buildSpecificFactor(op, neighbors),
-            buildStandardFactor(op, neighbors),
-        };
+    public int compare(NeighborValue<T> o1, NeighborValue<T> o2) {
+        int result = -operator.compare(o1.value, o2.value);
+        if (result == 0) {
+            result = o1.hashCode() > o2.hashCode() ? 1 : -1;
+        }
+        return result;
     }
-
-    private Factor buildSpecificFactor(MaxOperator op, Factor[] neighbors) {
-        EqualityFactor factor = new EqualityFactor();
-        factor.setMaxOperator(op);
-        link(factor, neighbors);
-        return factor;
-    }
-
-    private Factor buildStandardFactor(MaxOperator op, Factor[] neighbors) {
-        StandardFactor factor = new StandardFactor();
-        factor.setMaxOperator(op);
-        link(factor, neighbors);
-        factor.setPotential(buildPotential(op, neighbors));
-        return factor;
-    }
-
-    public double[] buildPotential(MaxOperator op, Factor[] neighbors) {
-        final int nNeighbors = neighbors.length;
-
-        // Initialize the cost/utilites array with "no goods"
-        double[] values = new double[1 << nNeighbors];
-        Arrays.fill(values, op.getWorstValue());
-
-        // Now set the rows with either no or all variables active to "0"
-        values[0] = 0;
-        values[values.length-1] = 0;
-
-        return values;
-    }
-
 }

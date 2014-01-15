@@ -36,6 +36,9 @@
  */
 package es.csic.iiia.maxsum.factors;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * Factor defined over a single variable (variable node in classical MaxSum).
  *
@@ -43,6 +46,25 @@ package es.csic.iiia.maxsum.factors;
  * @author Marc Pujol <mpujol@iiia.csic.es>
  */
 public class VariableFactor<T> extends AbstractFactor<T> {
+
+    @Override
+    protected double eval(Map<T, Boolean> values) {
+        final List<T> neighbors = getNeighbors();
+        final int nNeighbors = neighbors.size();
+
+        if (nNeighbors <= 1) {
+            return 0;
+        }
+
+        final boolean value = values.get(neighbors.get(0));
+        for (int i=1; i<nNeighbors; i++) {
+            if (value != values.get(neighbors.get(i))) {
+                return getMaxOperator().getWorstValue();
+            }
+        }
+
+        return 0;
+    }
 
     /**
      * Computes and sends the messages of this factor, using the formula:

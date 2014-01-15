@@ -40,6 +40,7 @@ import es.csic.iiia.maxsum.Factor;
 import es.csic.iiia.maxsum.CommunicationAdapter;
 import es.csic.iiia.maxsum.MaxOperator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This factor composes (sums) an independent cost/utility factor with some
@@ -49,6 +50,7 @@ import java.util.List;
  *
  * @param <T> Type of the factor's identity.
  * @author Marc Pujol <mpujol@iiia.csic.es>
+ * @deprecated
  */
 public class CompositeIndependentFactor<T> extends AbstractFactor<T>
     implements CommunicationAdapter<T>
@@ -75,6 +77,12 @@ public class CompositeIndependentFactor<T> extends AbstractFactor<T>
         innerFactor.setCommunicationAdapter(this);
         innerFactor.setMaxOperator(getMaxOperator());
         innerFactor.setIdentity(getIdentity());
+
+        if (independentFactor != null) {
+            for (T neighbor : independentFactor.getNeighbors()) {
+                innerFactor.addNeighbor(neighbor);
+            }
+        }
     }
 
     /**
@@ -91,6 +99,11 @@ public class CompositeIndependentFactor<T> extends AbstractFactor<T>
      */
     public void setIndependentFactor(IndependentFactor<T> independentFactor) {
         this.independentFactor = independentFactor;
+        if (innerFactor != null) {
+            for (T neighbor : innerFactor.getNeighbors()) {
+                independentFactor.addNeighbor(neighbor);
+            }
+        }
     }
 
     @Override
@@ -119,6 +132,9 @@ public class CompositeIndependentFactor<T> extends AbstractFactor<T>
         if (innerFactor != null) {
             innerFactor.setIdentity(identity);
         }
+        if (independentFactor != null) {
+            independentFactor.setIdentity(identity);
+        }
     }
 
     @Override
@@ -127,21 +143,37 @@ public class CompositeIndependentFactor<T> extends AbstractFactor<T>
         if (innerFactor != null) {
             innerFactor.setMaxOperator(maxOperator);
         }
+        if (independentFactor != null) {
+            independentFactor.setMaxOperator(maxOperator);
+        }
     }
 
     @Override
     public void addNeighbor(T factor) {
-        innerFactor.addNeighbor(factor);
+        if (innerFactor != null) {
+            innerFactor.addNeighbor(factor);
+        }
+        if (independentFactor != null) {
+            independentFactor.addNeighbor(factor);
+        }
     }
 
     @Override
     public List<T> getNeighbors() {
-        return innerFactor.getNeighbors();
+        if (innerFactor != null) {
+            return innerFactor.getNeighbors();
+        }
+        return independentFactor.getNeighbors();
     }
 
     @Override
     public void send(double message, T recipient) {
         throw new UnsupportedOperationException("This method should never be called.");
+    }
+
+    @Override
+    protected double eval(Map<T, Boolean> values) {
+        return independentFactor.evaluate(values) + innerFactor.evaluate(values);
     }
 
     @Override

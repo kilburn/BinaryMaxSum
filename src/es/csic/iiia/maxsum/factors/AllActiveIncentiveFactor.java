@@ -38,6 +38,7 @@ package es.csic.iiia.maxsum.factors;
 
 import es.csic.iiia.maxsum.MaxOperator;
 import es.csic.iiia.maxsum.util.BestValuesTracker;
+import java.util.Map;
 
 /**
  * A factor that (de)incentivizes a group of variables (from being) to be all on.
@@ -82,6 +83,16 @@ public class AllActiveIncentiveFactor<T> extends AbstractFactor<T> {
     public void setMaxOperator(MaxOperator maxOperator) {
         super.setMaxOperator(maxOperator);
         worstValuesTracker = new BestValuesTracker<T>(maxOperator.inverse());
+    }
+
+    @Override
+    public double eval(Map<T, Boolean> values) {
+        for (T neighbor : getNeighbors()) {
+            if (!values.get(neighbor)) {
+                return 0;
+            }
+        }
+        return incentive;
     }
 
     @Override
