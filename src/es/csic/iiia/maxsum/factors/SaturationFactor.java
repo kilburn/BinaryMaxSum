@@ -99,13 +99,17 @@ public class SaturationFactor<T> extends IndependentFactor<T> {
     @Override
     protected double eval(Map<T, Boolean> values) {
         BestValuesTracker<T> chosen = new BestValuesTracker<T>(getMaxOperator());
+        chosen.reset();
+        boolean empty = true;
+
         for (T neighbor : getNeighbors()) {
             if (values.get(neighbor)) {
+                empty = false;
                 chosen.track(neighbor, getPotential(neighbor));
             }
         }
 
-        return chosen.getBestValue();
+        return empty ? 0 : chosen.getBestValue();
     }
 
     @Override
