@@ -37,9 +37,7 @@
 package es.csic.iiia.maxsum.util;
 
 import es.csic.iiia.maxsum.MaxOperator;
-import java.util.Comparator;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -53,7 +51,7 @@ public class BestKValuesTracker<T> {
     private static final Logger LOG = Logger.getLogger(BestKValuesTracker.class.getName());
 
     private MaxOperator operator;
-    private BoundedTreeSet<Entry> elements;
+    private BoundedTreeSet<NeighborValue<T>> elements;
     private int k;
 
     // Cached data for faster operation
@@ -68,7 +66,7 @@ public class BestKValuesTracker<T> {
      */
     public BestKValuesTracker(MaxOperator operator, int k) {
         this.k = k;
-        elements = new BoundedTreeSet<Entry>(k+1, new EntryComparator());
+        elements = new BoundedTreeSet<NeighborValue<T>>(k+1, new NeighborComparator<T>(operator));
         this.operator = operator;
     }
 
@@ -82,7 +80,7 @@ public class BestKValuesTracker<T> {
     }
 
     private void precompute() {
-        sum = 0; Iterator<Entry> it = elements.iterator();
+        sum = 0; Iterator<NeighborValue<T>> it = elements.iterator();
         for (int i=0; i<k && it.hasNext(); i++) {
             sum += it.next().value;
         }
@@ -90,6 +88,19 @@ public class BestKValuesTracker<T> {
         bound_1 = elements.size() > k && it.hasNext() ? it.next().value : Double.NaN;
         bound_0 = it.hasNext() ? it.next().value : Double.NaN;
         precomputed = true;
+    }
+
+    /**
+     * Computes the sum of the k best tracked costs/utilities.
+     *
+     * @return sum of the k best tracked costs/utilities.
+     */
+    public double sum() {
+        if (!precomputed) {
+            precompute();
+        }
+
+        return sum;
     }
 
     /**
@@ -118,7 +129,7 @@ public class BestKValuesTracker<T> {
 
         // This checks if the given element is one of the "k" best ones
         // (the second part of the if checks that it is not the k+1 best element)
-        if (elements.contains(new Entry(element, value)) && value != bound_1) {
+        if (elements.contains(new NeighborValue<T>(element, value)) && value != bound_1) {
             // If it is, we adapt the sum to be that of the other k best elements
             sum_e -= value;
             sum_e += Double.isNaN(bound_1) ? 0 : bound_1;
@@ -144,7 +155,7 @@ public class BestKValuesTracker<T> {
     public void track(T element, double value) {
         LOG.log(Level.FINEST, "BestKValues tracking element {0} with value {1}",
                 new Object[]{element, value});
-        elements.add(new Map.Entry<T, Double>(element, value));
+        elements.add(new NeighborValue<T>(element, value));
     }
 
     @Override
@@ -153,68 +164,12 @@ public class BestKValuesTracker<T> {
                 .append(elements.capacity)
                 .append("](");
         String separator = "";
-        for (Map.Entry<T, Double> e : elements) {
+        for (NeighborValue<T> e : elements) {
             buf.append(separator).append(e);
             separator = ", ";
         }
         buf.append(")");
         return buf.toString();
-    }
-
-    /*
-    private class Entry {
-        public final T element;
-        public final double value;
-
-        public Entry(T element, double value) {
-            this.element = element;
-            this.value = value;
-        }
-
-        @Override
-        public String toString() {
-            return element + ":" + value;
-        }
-
-        @Override
-        public int hashCode() {
-            return (this.element != null ? this.element.hashCode() : 0);
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj == null) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
-                return false;
-            }
-            @SuppressWarnings("unchecked")
-            final Entry other = (Entry) obj;
-            if (this.element != other.element && (this.element == null || !this.element.equals(other.element))) {
-                return false;
-            }
-            return true;
-        }
-
-    }*/
-
-    private class EntryComparator<T> implements Comparator<Map.Entry<T, Double>> {
-
-        private final MaxOperator operator;
-
-        public EntryComparator(MaxOperator operator) {
-            this.operator = operator;
-        }
-
-        @Override
-        public int compare(Map.Entry<T, Double> o1, Map.Entry<T, Double> o2) {
-            int result = -operator.compare(o1.getValue(), o2.getValue());
-            if (result == 0) {
-                result = o1.hashCode() > o2.hashCode() ? 1 : -1;
-            }
-            return result;
-        }
     }
 
 }

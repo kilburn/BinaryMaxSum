@@ -38,7 +38,6 @@ package es.csic.iiia.maxsum.factors;
 
 import es.csic.iiia.maxsum.MaxOperator;
 import es.csic.iiia.maxsum.util.BestKValuesTracker;
-import es.csic.iiia.maxsum.util.BoundedTreeSet;
 import java.util.Map;
 
 /**
