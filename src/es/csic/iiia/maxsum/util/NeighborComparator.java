@@ -76,7 +76,9 @@ public class NeighborComparator<T> implements Comparator<NeighborValue<T>> {
         // Tree{Map/Set}s. In that case, two NeighborValues with the same value but different
         // neighbor must *not* be treated as equal, which is what we achieve through the hashcode.
         if (result == 0) {
-            return Integer.compare(o1.hashCode(), o2.hashCode());
+            final int h1 = o1.hashCode();
+            final int h2 = o2.hashCode();
+            return h1 == h2 ? 0 : (h1 > h2 ? 1 : -1);
         }
         return result;
     }
