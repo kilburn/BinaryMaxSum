@@ -100,16 +100,19 @@ public abstract class AbstractFactor<T> implements Factor<T> {
     }
 
     /**
-     * Get the last message received from the given neighor.
+     * Get the last message received from the given neighbor.
      *
      * @param neighbor neighbor whose message to get.
      * @return message received from the given neighbor.
      */
     public double getMessage(T neighbor) {
-        if (!messages.containsKey(neighbor)) {
-            throw new RuntimeException("I don't have a message from neighbor " + neighbor);
+        double value = 0;
+        
+        if (messages.containsKey(neighbor)) {
+            value = messages.get(neighbor);
         }
-        return messages.get(neighbor);
+        
+        return value;
     }
 
     /**
@@ -139,9 +142,7 @@ public abstract class AbstractFactor<T> implements Factor<T> {
 
     @Override
     public final long run() {
-        long ccs = iter();
-        messages.clear();
-        return ccs;
+        return iter();
     }
 
     @Override
@@ -149,6 +150,7 @@ public abstract class AbstractFactor<T> implements Factor<T> {
         if (!neighbors.contains(sender)) {
             throw new RuntimeException("I (" + getClass().getName() + ", " + getIdentity() + ") received a message from the non-neighbor sender " + sender);
         }
+        
         messages.put(sender, message);
     }
 
