@@ -119,6 +119,14 @@ public interface Factor<T extends Object> {
     public void send(double message, T recipient);
 
     /**
+     * Get the last message received from the given neighbor.
+     *
+     * @param neighbor neighbor whose message to get.
+     * @return message received from the given neighbor.
+     */
+    public double getMessage(T neighbor);
+
+    /**
      * Evaluate this factor given the neighbor's values.
      *
      * @param values map of value for each neighbor
