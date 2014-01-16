@@ -115,7 +115,7 @@ public class SaturationKFactor<T> extends IndependentFactor<T> {
 
     // TODO: Track the number of constraint checks
     @Override
-    protected long iter() {
+    public long run() {
         final MaxOperator max = getMaxOperator();
         max_b.reset();
         max_bv_0.reset();

@@ -113,7 +113,7 @@ public class SaturationFactor<T> extends IndependentFactor<T> {
     }
 
     @Override
-    protected long iter() {
+    public long run() {
         final MaxOperator max = getMaxOperator();
 
         double v_positive = 0;

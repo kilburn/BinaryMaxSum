@@ -74,7 +74,7 @@ public class SelectorFactor<T> extends AbstractFactor<T> {
     }
 
     @Override
-    public long iter() {
+    public long run() {
         // Compute the minimums
         tracker.reset();
         for (T f : getNeighbors()) {

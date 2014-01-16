@@ -177,7 +177,7 @@ public class CompositeIndependentFactor<T> extends AbstractFactor<T>
     }
 
     @Override
-    public long iter() {
+    public long run() {
         return getNeighbors().size() + innerFactor.run();
     }
 

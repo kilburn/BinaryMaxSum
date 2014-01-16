@@ -107,7 +107,7 @@ public class StandardFactor<T> extends AbstractFactor<T> {
     }
 
     @Override
-    protected long iter() {
+    public long run() {
         final List<T> neighbors = getNeighbors();
         final int nNeighbors = neighbors.size();
 
