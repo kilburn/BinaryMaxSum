@@ -37,6 +37,7 @@
 package es.csic.iiia.maxsum.util;
 
 import es.csic.iiia.maxsum.MaxOperator;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -66,7 +67,8 @@ public class BestKValuesTracker<T> {
      */
     public BestKValuesTracker(MaxOperator operator, int k) {
         this.k = k;
-        elements = new BoundedTreeSet<NeighborValue<T>>(k+1, new NeighborComparator<T>(operator));
+        elements = new BoundedTreeSet<NeighborValue<T>>(k+1,
+                Collections.reverseOrder(new NeighborComparator<T>(operator)));
         this.operator = operator;
     }
 

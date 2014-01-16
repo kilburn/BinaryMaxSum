@@ -113,6 +113,7 @@ public class SaturationKFactor<T> extends IndependentFactor<T> {
         return chosen.sum();
     }
 
+    // TODO: Track the number of constraint checks
     @Override
     protected long iter() {
         final MaxOperator max = getMaxOperator();

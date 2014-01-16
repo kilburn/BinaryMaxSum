@@ -118,7 +118,7 @@ public abstract class AbstractFactor<T> implements Factor<T> {
     /**
      * Run an iteration of the factor.
      *
-     * @return
+     * @return number of operations performed during this iteration.
      */
     protected abstract long iter();
 

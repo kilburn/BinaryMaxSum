@@ -73,7 +73,7 @@ public abstract class CrossFactorTestAbstract {
     private final int MAX_NEIGHBORS = 10;
 
     /** Generator of random values */
-    private Random generator = new Random(0L);
+    private Random generator = new Random();
 
     /**
      * Builds the factors to cross-test.
@@ -122,6 +122,13 @@ public abstract class CrossFactorTestAbstract {
         return generator.nextInt(n);
     }
 
+    /**
+     * Tests the messages sent by a specific implementation of a factor against those sent by
+     * a more generic factor.
+     * <p/>
+     * For instance, this can be used to test the {@link CardinalityFactor}'s messages against
+     * those sent by a {@link StandardFactor} using an equivalent potential table.
+     */
     @Test
     public void crossTestMessages() {
         for (int i=0; i<NUMBER_OF_RUNS; i++) {
@@ -137,6 +144,13 @@ public abstract class CrossFactorTestAbstract {
         }
     }
 
+    /**
+     * Tests the evaluation of a configuration computed by a specific implementation of a factor
+     * against the same computation using a more general factor.
+     * <p/>
+     * For instance, this can be used to test the {@link CardinalityFactor}'s evaluation against
+     * the evaluation performed using a {@link StandardFactor} with an equivalent potential table.
+     */
     @Test
     public void crossTestEvaluation() {
         for (int i=0; i<NUMBER_OF_RUNS; i++) {

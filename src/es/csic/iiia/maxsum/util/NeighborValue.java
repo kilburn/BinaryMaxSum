@@ -37,27 +37,42 @@
 package es.csic.iiia.maxsum.util;
 
 /**
+ * Boxing class to hold a reference to a neighbor and a corresponding value.
  *
  * @author Marc Pujol <mpujol@iiia.csic.es>
+ * @param <T> Type of the factors' (neighbors') identites.
  */
 public class NeighborValue<T> {
 
-    public final T element;
+    /**
+     * Referenced neighbor.
+     */
+    public final T neighbor;
+
+    /**
+     * Corresponding value.
+     */
     public final double value;
 
-    public NeighborValue(T element, double value) {
-        this.element = element;
+    /**
+     * Build a new box to store a neighbor and its value.
+     *
+     * @param neighbor neighbor to reference.
+     * @param value corresponding value.
+     */
+    public NeighborValue(T neighbor, double value) {
+        this.neighbor = neighbor;
         this.value = value;
     }
 
     @Override
     public String toString() {
-        return element + ":" + value;
+        return neighbor + ":" + value;
     }
 
     @Override
     public int hashCode() {
-        return (this.element != null ? this.element.hashCode() : 0);
+        return (this.neighbor != null ? this.neighbor.hashCode() : 0);
     }
 
     @Override
@@ -70,7 +85,7 @@ public class NeighborValue<T> {
         }
         @SuppressWarnings("unchecked")
         final NeighborValue<T> other = (NeighborValue<T>) obj;
-        if (this.element != other.element && (this.element == null || !this.element.equals(other.element))) {
+        if (this.neighbor != other.neighbor && (this.neighbor == null || !this.neighbor.equals(other.neighbor))) {
             return false;
         }
         return true;

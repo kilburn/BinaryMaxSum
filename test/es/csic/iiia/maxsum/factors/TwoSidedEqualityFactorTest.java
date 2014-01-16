@@ -41,16 +41,16 @@ import es.csic.iiia.maxsum.Factor;
 import es.csic.iiia.maxsum.MaxOperator;
 import es.csic.iiia.maxsum.Maximize;
 
-import static org.mockito.Matchers.same;
 import static org.mockito.Mockito.*;
 import static org.mockito.AdditionalMatchers.eq;
 
 import org.junit.Test;
 
 /**
- * 
+ *
  * @author Toni Penya-Alba <tonipenya@iiia.csic.es>
  */
+@SuppressWarnings({"unchecked","rawtypes"})
 public class TwoSidedEqualityFactorTest extends CrossFactorTestAbstract {
 
     private final double DELTA = 0.0001d;
@@ -70,7 +70,7 @@ public class TwoSidedEqualityFactorTest extends CrossFactorTestAbstract {
 
         run(new Maximize(), values, results, 2);
     }
-    
+
     private void run(MaxOperator op, double[] values, double[] results,
             int nElementsA) {
         CommunicationAdapter com = mock(CommunicationAdapter.class);
@@ -140,7 +140,7 @@ public class TwoSidedEqualityFactorTest extends CrossFactorTestAbstract {
 
             values[configurationIdx] = (reserve != 0) ? op.getWorstValue() : 0;
         }
-        
+
         return values;
     }
 

@@ -41,13 +41,23 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * Factor that composes (sums) an independent cost/utility for each neighbor with some
+ * other <em>inner</em> (non-idependent) factor.
+ * <p/>
+ * The resulting complexity is the same as that of the inner factor.
  *
  * @author Marc Pujol <mpujol@iiia.csic.es>
+ * @param <T> Type of the factor's identity.
  */
 public class WeightingFactor<T> extends ProxyFactor<T> {
 
     private Map<T, Double> potential = new HashMap<T, Double>();
 
+    /**
+     * Build a new weighting factor with the specified inner factor.
+     *
+     * @param innerFactor inner factor to compose (sum) with the per-neighbor weights.
+     */
     public WeightingFactor(Factor<T> innerFactor) {
         super(innerFactor);
     }
