@@ -96,7 +96,7 @@ public class AllActiveIncentiveFactor<T> extends AbstractFactor<T> {
     }
 
     @Override
-    public long iter() {
+    public long run() {
         final MaxOperator max = getMaxOperator();
         final MaxOperator min = getMaxOperator().inverse();
         worstValuesTracker.reset();

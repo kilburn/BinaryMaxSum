@@ -76,7 +76,7 @@ public class VariableFactor<T> extends AbstractFactor<T> {
      * @return number of Constraint Checks performed by this node.
      */
     @Override
-    protected long iter() {
+    public long run() {
         double belief = 0;
 
         for (T f : getNeighbors()) {

@@ -106,21 +106,8 @@ public abstract class AbstractFactor<T> implements Factor<T> {
      * @return message received from the given neighbor.
      */
     public double getMessage(T neighbor) {
-        double value = 0;
-        
-        if (messages.containsKey(neighbor)) {
-            value = messages.get(neighbor);
-        }
-        
-        return value;
+        return messages.get(neighbor);
     }
-
-    /**
-     * Run an iteration of the factor.
-     *
-     * @return number of operations performed during this iteration.
-     */
-    protected abstract long iter();
 
     /**
      * Evaluate this factor given the neighbor's values.
@@ -138,11 +125,6 @@ public abstract class AbstractFactor<T> implements Factor<T> {
             }
         }
         return eval(values);
-    }
-
-    @Override
-    public final long run() {
-        return iter();
     }
 
     @Override

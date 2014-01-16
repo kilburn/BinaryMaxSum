@@ -59,7 +59,7 @@ import es.csic.iiia.maxsum.util.NeighborValue;
 public class TwoSidedEqualityFactor<T> extends AbstractTwoSidedFactor<T> {
 
     @Override
-    protected long iter() {
+    public long run() {
         final MaxOperator op = getMaxOperator();
         final int nNeighbors = getNeighbors().size();
         final int nElementsB = nNeighbors - nElementsA;
