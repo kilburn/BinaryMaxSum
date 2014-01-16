@@ -69,6 +69,7 @@ public class TickCommunicationAdapter implements CommunicationAdapter<Factor<Fac
         for (Message m : buffer) {
             m.recipient.receive(m.value, m.sender);
         }
+        buffer.clear();
     }
 
     /**
