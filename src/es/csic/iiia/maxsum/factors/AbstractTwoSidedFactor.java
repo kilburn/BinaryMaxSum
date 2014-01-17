@@ -36,12 +36,13 @@
  */
 package es.csic.iiia.maxsum.factors;
 
-import es.csic.iiia.maxsum.util.NeighborComparator;
-import es.csic.iiia.maxsum.util.NeighborValue;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import es.csic.iiia.maxsum.util.NeighborComparator;
+import es.csic.iiia.maxsum.util.NeighborValue;
 
 /**
  * Abstract class for two-sided factors.
