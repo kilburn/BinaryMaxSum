@@ -125,8 +125,18 @@ public abstract class ProxyFactor<T> implements Factor<T> {
     }
 
     @Override
+    public boolean removeNeighbor(T factor) {
+        return innerFactor.removeNeighbor(factor);
+    }
+
+    @Override
     public List<T> getNeighbors() {
         return innerFactor.getNeighbors();
+    }
+
+    @Override
+    public void clearNeighbors() {
+        innerFactor.clearNeighbors();
     }
 
     @Override

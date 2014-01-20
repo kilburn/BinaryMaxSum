@@ -96,8 +96,20 @@ public abstract class AbstractFactor<T> implements Factor<T> {
     }
 
     @Override
+    public boolean removeNeighbor(T factor) {
+        messages.remove(factor);
+        return neighbors.remove(factor);
+    }
+
+    @Override
     public List<T> getNeighbors() {
         return neighbors;
+    }
+
+    @Override
+    public void clearNeighbors() {
+        neighbors.clear();
+        messages.clear();
     }
 
     /**

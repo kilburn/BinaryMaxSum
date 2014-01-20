@@ -53,6 +53,18 @@ public class WeightingFactor<T> extends ProxyFactor<T> {
 
     private Map<T, Double> potential = new HashMap<T, Double>();
 
+    @Override
+    public boolean removeNeighbor(T factor) {
+        potential.remove(factor);
+        return super.removeNeighbor(factor);
+    }
+
+    @Override
+    public void clearNeighbors() {
+        super.clearNeighbors();
+        potential.clear();
+    }
+
     /**
      * Build a new weighting factor with the specified inner factor.
      *

@@ -96,11 +96,24 @@ public interface Factor<T extends Object> {
     public void addNeighbor(T factor);
 
     /**
+     * Removes the specified neighbor from this factor.
+     *
+     * @param factor neighbor to remove.
+     * @return <code>true</code> if this factor contained the specified neighbor
+     */
+    public boolean removeNeighbor(T factor);
+
+    /**
      * Get the neighbors of this factor.
      *
      * @return neighbors of this factor
      */
     public List<T> getNeighbors();
+
+    /**
+     * Removes all neighbors of this factor.
+     */
+    public void clearNeighbors();
 
     /**
      * Receive a message.
