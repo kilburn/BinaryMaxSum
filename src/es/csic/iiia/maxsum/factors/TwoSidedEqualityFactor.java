@@ -114,7 +114,7 @@ public class TwoSidedEqualityFactor<T> extends AbstractTwoSidedFactor<T> {
     }
 
     @Override
-    public double eval(Map<T, Boolean> values) {
+    protected double eval(Map<T, Boolean> values) {
         final int reserve = getReserve(values);
 
         return (reserve == 0) ? 0 : getMaxOperator().getWorstValue();
