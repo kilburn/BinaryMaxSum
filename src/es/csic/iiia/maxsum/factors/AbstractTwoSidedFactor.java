@@ -41,8 +41,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import com.sun.org.apache.xml.internal.serializer.utils.Messages;
-
 import es.csic.iiia.maxsum.util.NeighborComparator;
 import es.csic.iiia.maxsum.util.NeighborValue;
 
