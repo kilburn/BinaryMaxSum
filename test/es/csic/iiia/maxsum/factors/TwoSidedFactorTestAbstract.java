@@ -7,12 +7,15 @@ import org.junit.Test;
 
 import es.csic.iiia.maxsum.Factor;
 
-public class AbstractTwoSidedFactorTest {
+@SuppressWarnings({"unchecked","rawtypes"})
+public abstract class TwoSidedFactorTestAbstract extends CrossFactorTestAbstract {
+
+    protected abstract AbstractTwoSidedFactor createFactor();
 
     @Test
     public void testAddA() {
         Factor[] neighbors = new Factor[]{mock(Factor.class), mock(Factor.class)};
-        TwoSidedReserveFactor<Factor> f = new TwoSidedReserveFactor<Factor>();
+        AbstractTwoSidedFactor<Factor> f = createFactor();
 
         f.addNeighbor(neighbors[0]);
         f.addNeighbor(neighbors[1]);
@@ -31,7 +34,7 @@ public class AbstractTwoSidedFactorTest {
     @Test
     public void testAdd() {
         Factor[] neighbors = new Factor[]{mock(Factor.class), mock(Factor.class)};
-        TwoSidedReserveFactor<Factor> f = new TwoSidedReserveFactor<Factor>();
+        AbstractTwoSidedFactor<Factor> f = createFactor();
         f.setNElementsA(0);
 
         f.addANeighbor(neighbors[0]);
@@ -50,7 +53,7 @@ public class AbstractTwoSidedFactorTest {
     @Test
     public void testAddB() {
         Factor[] neighbors = new Factor[]{mock(Factor.class), mock(Factor.class)};
-        TwoSidedReserveFactor<Factor> f = new TwoSidedReserveFactor<Factor>();
+        AbstractTwoSidedFactor<Factor> f = createFactor();
 
         f.addNeighbor(neighbors[0]);
         f.addNeighbor(neighbors[1]);
@@ -69,7 +72,7 @@ public class AbstractTwoSidedFactorTest {
     @Test
     public void testRemoveA() {
         Factor[] neighbors = new Factor[]{mock(Factor.class), mock(Factor.class)};
-        TwoSidedReserveFactor<Factor> f = new TwoSidedReserveFactor<Factor>();
+        AbstractTwoSidedFactor<Factor> f = createFactor();
 
         f.addNeighbor(neighbors[0]);
         f.addNeighbor(neighbors[1]);
@@ -92,7 +95,7 @@ public class AbstractTwoSidedFactorTest {
     @Test
     public void testRemoveB() {
         Factor[] neighbors = new Factor[]{mock(Factor.class), mock(Factor.class)};
-        TwoSidedReserveFactor<Factor> f = new TwoSidedReserveFactor<Factor>();
+        AbstractTwoSidedFactor<Factor> f = createFactor();
 
         f.addNeighbor(neighbors[0]);
         f.addNeighbor(neighbors[1]);
