@@ -108,6 +108,7 @@ public class CompositeIndependentFactor<T> extends AbstractFactor<T>
 
     @Override
     public void receive(double message, T sender) {
+        super.receive(message, sender);
         double value = message + independentFactor.getPotential(sender);
         innerFactor.receive(value, sender);
     }
@@ -150,6 +151,7 @@ public class CompositeIndependentFactor<T> extends AbstractFactor<T>
 
     @Override
     public void addNeighbor(T factor) {
+        super.addNeighbor(factor);
         if (innerFactor != null) {
             innerFactor.addNeighbor(factor);
         }
