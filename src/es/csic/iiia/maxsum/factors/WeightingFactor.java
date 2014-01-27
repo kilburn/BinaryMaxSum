@@ -81,6 +81,11 @@ public class WeightingFactor<T> extends ProxyFactor<T> {
         potential.clear();
     }
 
+    @Override
+    public double getMessage(T neighbor) {
+        return super.getMessage(neighbor) - getPotential(neighbor);
+    }
+
     /**
      * Get the cost/utility of activating the variable shared with the given
      * neighbor.

@@ -61,23 +61,24 @@ public class SingleWeightFactor<T> extends ProxyFactor<T> {
         super(innerFactor);
     }
 
+    @Override
+    public double getMessage(T neighbor) {
+        return super.getMessage(neighbor) - getPotential();
+    }
+
     /**
-     * Get the cost/utility of activating the variable shared with the given
-     * neighbor.
+     * Get the cost/utility of activating a variable.
      *
-     * @param neighbor neighbor to consider
-     * @return cost of activating the given neighbor
+     * @return cost of activating
      */
     public double getPotential() {
         return potential;
     }
 
     /**
-     * Set the independent cost of activating the variable that corresponds to
-     * the given neighbor.
+     * Set the independent cost of activating a variable.
      *
-     * @param neighbor
-     * @param value cost/utility of activating this neighbor
+     * @param value cost/utility of activating a variable
      */
     public void setPotential(double value) {
         potential = value;

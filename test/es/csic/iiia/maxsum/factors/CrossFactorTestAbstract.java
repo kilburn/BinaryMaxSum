@@ -41,6 +41,8 @@ import es.csic.iiia.maxsum.Factor;
 import es.csic.iiia.maxsum.MaxOperator;
 import es.csic.iiia.maxsum.Maximize;
 import es.csic.iiia.maxsum.Minimize;
+import es.csic.iiia.maxsum.factors.cardinality.KAlphaFunction;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -49,6 +51,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
+
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -120,6 +123,17 @@ public abstract class CrossFactorTestAbstract {
      */
     protected int getRandomIntValue(int n) {
         return generator.nextInt(n);
+    }
+
+    @Test
+    public void testSetGetMessage() {
+        Factor sender = mock(Factor.class);
+        Factor[] factors = buildFactors(new Maximize(), new Factor[]{sender});
+        double message = 10.0;
+        Factor f = factors[0];
+        f.addNeighbor(sender);
+        f.receive(message, sender);
+        assertEquals(message, f.getMessage(sender), DELTA);
     }
 
     /**
