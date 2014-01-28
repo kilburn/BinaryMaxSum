@@ -107,7 +107,10 @@ public abstract class AbstractTwoSidedFactor<T> extends AbstractFactor<T> {
 
     @Override
     public boolean removeNeighbor(T factor) {
-        if (getNeighbors().lastIndexOf(factor) < nElementsA) {
+        int index = getNeighbors().lastIndexOf(factor);
+
+        boolean isInA = index >= 0 && index < nElementsA;
+        if (isInA) {
             nElementsA--;
         }
 

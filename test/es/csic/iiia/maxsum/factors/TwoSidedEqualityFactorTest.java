@@ -51,7 +51,7 @@ import org.junit.Test;
  * @author Toni Penya-Alba <tonipenya@iiia.csic.es>
  */
 @SuppressWarnings({"unchecked","rawtypes"})
-public class TwoSidedEqualityFactorTest extends CrossFactorTestAbstract {
+public class TwoSidedEqualityFactorTest extends TwoSidedFactorTestAbstract {
 
     private final double DELTA = 0.0001d;
 
@@ -69,6 +69,11 @@ public class TwoSidedEqualityFactorTest extends CrossFactorTestAbstract {
         double[] results = new double[] { -3, 2, 3};
 
         run(new Maximize(), values, results, 2);
+    }
+
+    @Override
+    protected AbstractTwoSidedFactor createFactor() {
+        return new TwoSidedEqualityFactor();
     }
 
     private void run(MaxOperator op, double[] values, double[] results,
@@ -143,5 +148,4 @@ public class TwoSidedEqualityFactorTest extends CrossFactorTestAbstract {
 
         return values;
     }
-
 }
