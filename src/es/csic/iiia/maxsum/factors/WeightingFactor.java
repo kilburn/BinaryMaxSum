@@ -54,6 +54,13 @@ public class WeightingFactor<T> extends ProxyFactor<T> {
     private Map<T, Double> potential = new HashMap<T, Double>();
 
     @Override
+    public void addNeighbor(T factor) {
+        // We need to set a potential for this neighbor to initialize it properly
+        potential.put(factor, 0d);
+        super.addNeighbor(factor);
+    }
+
+    @Override
     public boolean removeNeighbor(T factor) {
         potential.remove(factor);
         return super.removeNeighbor(factor);
@@ -118,7 +125,11 @@ public class WeightingFactor<T> extends ProxyFactor<T> {
      * @param value cost/utility of activating this neighbor
      */
     public void setPotential(T neighbor, double value) {
+        // If we change the potential, the last message received from that neighbor
+        // must be adapted too.
+        double lastMessage = getMessage(neighbor);
         potential.put(neighbor, value);
+        receive(lastMessage, neighbor);
     }
 
     @Override
