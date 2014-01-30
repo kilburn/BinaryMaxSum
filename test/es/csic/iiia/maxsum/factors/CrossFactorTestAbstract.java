@@ -41,7 +41,6 @@ import es.csic.iiia.maxsum.Factor;
 import es.csic.iiia.maxsum.MaxOperator;
 import es.csic.iiia.maxsum.Maximize;
 import es.csic.iiia.maxsum.Minimize;
-import es.csic.iiia.maxsum.factors.cardinality.KAlphaFunction;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -93,6 +92,19 @@ public abstract class CrossFactorTestAbstract {
      * @return pair of factors to cross-test
      */
     public abstract Factor[] buildFactors(MaxOperator op, Factor[] neighbors);
+
+    @Test
+    public void testUnitializedFactorMessagesShouldBe0() {
+        Factor[] neighbors = new Factor[]{
+            mock(Factor.class), mock(Factor.class)
+        };
+        Factor[] fs = buildFactors(new Maximize(), neighbors);
+        Factor tested = fs[0];
+
+        for (Factor neighbor : neighbors) {
+            assertEquals(0, tested.getMessage(neighbor), DELTA);
+        }
+    }
 
     /**
      * Adds the list of factors as neighbors of the given one.

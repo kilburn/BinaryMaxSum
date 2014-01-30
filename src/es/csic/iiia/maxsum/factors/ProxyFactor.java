@@ -122,6 +122,7 @@ public abstract class ProxyFactor<T> implements Factor<T> {
     @Override
     public void addNeighbor(T factor) {
         innerFactor.addNeighbor(factor);
+        receive(0, factor);
     }
 
     @Override
