@@ -40,10 +40,12 @@ import es.csic.iiia.maxsum.CommunicationAdapter;
 import es.csic.iiia.maxsum.Factor;
 import es.csic.iiia.maxsum.factors.cardinality.KAlphaFunction;
 import es.csic.iiia.maxsum.MaxOperator;
+import es.csic.iiia.maxsum.Maximize;
 import es.csic.iiia.maxsum.Minimize;
 import java.util.Arrays;
 import java.util.logging.Logger;
 import static org.mockito.Mockito.*;
+import static org.junit.Assert.*;
 import static org.mockito.AdditionalMatchers.eq;
 import org.junit.Test;
 
@@ -81,6 +83,21 @@ public class WeightingFactorTest extends CrossFactorTestAbstract {
         double[] potentials = new double[]{3, 0};
         double[] results    = new double[]{4, 1};
         run(new Minimize(), values, potentials, results);
+    }
+
+    @Test
+    public void testMessagesMaintainedWhenPotentialChanges() {
+        WeightingFactor tested = new WeightingFactor(new StandardFactor());
+        Factor neighbor = mock(Factor.class);
+        tested.addNeighbor(neighbor);
+
+        assertEquals(tested.getMessage(neighbor), 0, DELTA);
+        tested.setPotential(neighbor, 1d);
+        assertEquals(tested.getMessage(neighbor), 0, DELTA);
+        tested.receive(1d, neighbor);
+        assertEquals(tested.getMessage(neighbor), 1, DELTA);
+        tested.setPotential(neighbor, 0);
+        assertEquals(tested.getMessage(neighbor), 1, DELTA);
     }
 
     private void init(Factor f, MaxOperator op, CommunicationAdapter com) {
@@ -140,7 +157,7 @@ public class WeightingFactorTest extends CrossFactorTestAbstract {
         return values;
     }
 
-    private Factor buildSpecificFactor(MaxOperator op, Factor[] neighbors, double[] independentPotentials) {
+    private WeightingFactor buildSpecificFactor(MaxOperator op, Factor[] neighbors, double[] independentPotentials) {
         WeightingFactor factor = new WeightingFactor(new SelectorFactor());
         factor.setMaxOperator(op);
 
