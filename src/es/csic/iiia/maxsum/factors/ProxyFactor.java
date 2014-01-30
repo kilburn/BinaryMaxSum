@@ -36,11 +36,12 @@
  */
 package es.csic.iiia.maxsum.factors;
 
+import java.util.List;
+import java.util.Map;
+
 import es.csic.iiia.maxsum.CommunicationAdapter;
 import es.csic.iiia.maxsum.Factor;
 import es.csic.iiia.maxsum.MaxOperator;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Skeletal implementation of a factor that relays (possibly modified) messages into/out of
@@ -99,6 +100,11 @@ public abstract class ProxyFactor<T> implements Factor<T> {
     }
 
     @Override
+    public double getMessage(T neighbor) {
+        return innerFactor.getMessage(neighbor);
+    }
+
+    @Override
     public void setMaxOperator(MaxOperator maxOperator) {
         innerFactor.setMaxOperator(maxOperator);
     }
@@ -119,8 +125,18 @@ public abstract class ProxyFactor<T> implements Factor<T> {
     }
 
     @Override
+    public boolean removeNeighbor(T factor) {
+        return innerFactor.removeNeighbor(factor);
+    }
+
+    @Override
     public List<T> getNeighbors() {
         return innerFactor.getNeighbors();
+    }
+
+    @Override
+    public void clearNeighbors() {
+        innerFactor.clearNeighbors();
     }
 
     @Override

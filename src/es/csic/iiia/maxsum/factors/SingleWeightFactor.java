@@ -37,7 +37,6 @@
 package es.csic.iiia.maxsum.factors;
 
 import es.csic.iiia.maxsum.Factor;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -46,79 +45,43 @@ import java.util.Map;
  * <p/>
  * The resulting complexity is the same as that of the inner factor.
  *
- * @author Marc Pujol <mpujol@iiia.csic.es>
+ * @author Toni Penya-Alba <tonipenya@iiia.csic.es>
  * @param <T> Type of the factor's identity.
  */
-public class WeightingFactor<T> extends ProxyFactor<T> {
+public class SingleWeightFactor<T> extends ProxyFactor<T> {
 
-    private Map<T, Double> potential = new HashMap<T, Double>();
-
-    @Override
-    public boolean removeNeighbor(T factor) {
-        potential.remove(factor);
-        return super.removeNeighbor(factor);
-    }
-
-    @Override
-    public void clearNeighbors() {
-        super.clearNeighbors();
-        potential.clear();
-    }
+    private double potential = 0d;
 
     /**
      * Build a new weighting factor with the specified inner factor.
      *
      * @param innerFactor inner factor to compose (sum) with the per-neighbor weights.
      */
-    public WeightingFactor(Factor<T> innerFactor) {
+    public SingleWeightFactor(Factor<T> innerFactor) {
         super(innerFactor);
-    }
-
-    /**
-     * Remove all potential costs.
-     */
-    public void clearPotentials() {
-        potential.clear();
     }
 
     @Override
     public double getMessage(T neighbor) {
-        return super.getMessage(neighbor) - getPotential(neighbor);
+        return super.getMessage(neighbor) - getPotential();
     }
 
     /**
-     * Get the cost/utility of activating the variable shared with the given
-     * neighbor.
+     * Get the cost/utility of activating a variable.
      *
-     * @param neighbor neighbor to consider
-     * @return cost of activating the given neighbor
+     * @return cost of activating
      */
-    public double getPotential(T neighbor) {
-        if (!potential.containsKey(neighbor)) {
-            throw new IllegalArgumentException("Requested potential for a non-existant neighbor");
-        }
-        return potential.get(neighbor);
+    public double getPotential() {
+        return potential;
     }
 
     /**
-     * Remove the cost associated to activating the given factor.
+     * Set the independent cost of activating a variable.
      *
-     * @param neighbor factor to consider
-     * @return previous cost of activating the given factor
+     * @param value cost/utility of activating a variable
      */
-    public Double removePotential(T neighbor) {
-        return potential.remove(neighbor);
-    }
-
-    /**
-     * Set the independent cost of activating the variable that corresponds to
-     * the given neighbor.
-     *
-     * @param neighbor
-     * @param value cost/utility of activating this neighbor
-     */
-    public void setPotential(T neighbor, double value) {
-        potential.put(neighbor, value);
+    public void setPotential(double value) {
+        potential = value;
     }
 
     @Override
@@ -126,7 +89,7 @@ public class WeightingFactor<T> extends ProxyFactor<T> {
         double value = super.evaluate(values);
         for (T neighbor : getNeighbors()) {
             if (values.get(neighbor)) {
-                value += getPotential(neighbor);
+                value += potential;
             }
         }
         return value;
@@ -134,12 +97,12 @@ public class WeightingFactor<T> extends ProxyFactor<T> {
 
     @Override
     public void receive(double message, T sender) {
-        super.receive(message + getPotential(sender), sender);
+        super.receive(message + potential, sender);
     }
 
     @Override
     public void send(double message, T recipient) {
-        super.send(message + getPotential(recipient), recipient);
+        super.send(message + potential, recipient);
     }
 
 

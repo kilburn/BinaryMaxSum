@@ -49,7 +49,7 @@ import org.junit.Test;
  * @author Toni Penya-Alba <tonipenya@iiia.csic.es>
  */
 @SuppressWarnings({"unchecked","rawtypes"})
-public class TwoSidedReserveFactorTest extends CrossFactorTestAbstract {
+public class TwoSidedReserveFactorTest extends TwoSidedFactorTestAbstract {
 
     private final double DELTA = 0.0001d;
 
@@ -140,6 +140,11 @@ public class TwoSidedReserveFactorTest extends CrossFactorTestAbstract {
                 op.getWorstValue() };
 
         run(op, values, results, 0);
+    }
+
+    @Override
+    protected AbstractTwoSidedFactor createFactor() {
+        return new TwoSidedEqualityFactor();
     }
 
     private void run(MaxOperator op, double[] values, double[] results,

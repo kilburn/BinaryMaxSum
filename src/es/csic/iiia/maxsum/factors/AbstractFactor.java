@@ -36,13 +36,14 @@
  */
 package es.csic.iiia.maxsum.factors;
 
-import es.csic.iiia.maxsum.Factor;
-import es.csic.iiia.maxsum.CommunicationAdapter;
-import es.csic.iiia.maxsum.MaxOperator;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import es.csic.iiia.maxsum.CommunicationAdapter;
+import es.csic.iiia.maxsum.Factor;
+import es.csic.iiia.maxsum.MaxOperator;
 
 /**
  * Skeletal implementation of a Max-Sum factor.
@@ -95,8 +96,20 @@ public abstract class AbstractFactor<T> implements Factor<T> {
     }
 
     @Override
+    public boolean removeNeighbor(T factor) {
+        messages.remove(factor);
+        return neighbors.remove(factor);
+    }
+
+    @Override
     public List<T> getNeighbors() {
         return neighbors;
+    }
+
+    @Override
+    public void clearNeighbors() {
+        neighbors.clear();
+        messages.clear();
     }
 
     /**
@@ -105,6 +118,7 @@ public abstract class AbstractFactor<T> implements Factor<T> {
      * @param neighbor neighbor whose message to get.
      * @return message received from the given neighbor.
      */
+    @Override
     public double getMessage(T neighbor) {
         return messages.get(neighbor);
     }

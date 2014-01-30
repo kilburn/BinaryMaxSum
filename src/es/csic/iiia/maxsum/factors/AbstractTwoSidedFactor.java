@@ -36,12 +36,13 @@
  */
 package es.csic.iiia.maxsum.factors;
 
-import es.csic.iiia.maxsum.util.NeighborComparator;
-import es.csic.iiia.maxsum.util.NeighborValue;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import es.csic.iiia.maxsum.util.NeighborComparator;
+import es.csic.iiia.maxsum.util.NeighborValue;
 
 /**
  * Abstract class for two-sided factors.
@@ -66,11 +67,54 @@ public abstract class AbstractTwoSidedFactor<T> extends AbstractFactor<T> {
     protected long constraintChecks;
 
     /**
+     * Get the number of elements in set A.
+     *
+     * @return The number of elements in set A.
+     */
+    public int getnElementsA() {
+        return nElementsA;
+    }
+
+    /**
      * Set the number of elements in set A.
      * @param nElements number of elements in set A.
      */
     public void setNElementsA(int nElements) {
         nElementsA = nElements;
+    }
+
+    /**
+     * Adds a new neighbor of this factor (graph link). The added neighbor is of
+     * the set A.
+     *
+     * @param factor new neighbor.
+     */
+    public void addANeighbor(T factor) {
+        getNeighbors().add(nElementsA, factor);
+        receive(0d, factor);
+        nElementsA++;
+    }
+
+    /**
+     * Adds a new neighbor of this factor (graph link). The added neighbor is of
+     * the set A.
+     *
+     * @param factor new neighbor.
+     */
+    public void addBNeighbor(T factor) {
+        super.addNeighbor(factor);
+    }
+
+    @Override
+    public boolean removeNeighbor(T factor) {
+        int index = getNeighbors().lastIndexOf(factor);
+
+        boolean isInA = index >= 0 && index < nElementsA;
+        if (isInA) {
+            nElementsA--;
+        }
+
+        return super.removeNeighbor(factor);
     }
 
     /**

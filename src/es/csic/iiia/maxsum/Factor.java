@@ -96,11 +96,24 @@ public interface Factor<T extends Object> {
     public void addNeighbor(T factor);
 
     /**
+     * Removes the specified neighbor from this factor.
+     *
+     * @param factor neighbor to remove.
+     * @return <code>true</code> if this factor contained the specified neighbor
+     */
+    public boolean removeNeighbor(T factor);
+
+    /**
      * Get the neighbors of this factor.
      *
      * @return neighbors of this factor
      */
     public List<T> getNeighbors();
+
+    /**
+     * Removes all neighbors of this factor.
+     */
+    public void clearNeighbors();
 
     /**
      * Receive a message.
@@ -117,6 +130,14 @@ public interface Factor<T extends Object> {
      * @param recipient intended recipient
      */
     public void send(double message, T recipient);
+
+    /**
+     * Get the last message received from the given neighbor.
+     *
+     * @param neighbor neighbor whose message to get.
+     * @return message received from the given neighbor.
+     */
+    public double getMessage(T neighbor);
 
     /**
      * Evaluate this factor given the neighbor's values.
