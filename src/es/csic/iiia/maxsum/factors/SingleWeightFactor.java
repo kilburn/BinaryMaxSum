@@ -81,12 +81,6 @@ public class SingleWeightFactor<T> extends ProxyFactor<T> {
      * @param newPotential cost/utility of activating a variable
      */
     public void setPotential(double newPotential) {
-//        final double oldPotential = getPotential();
-//        potential = value;
-//        for (T neighbor: getNeighbors()) {
-//            double lastMessage = getMessage(neighbor) - oldPotential + potential;
-//            receive(lastMessage, neighbor);
-//        }
         final double oldPotential = getPotential();
         for (T neighbor: getNeighbors()) {
             double correctedMessage = getMessage(neighbor) + newPotential - oldPotential;
