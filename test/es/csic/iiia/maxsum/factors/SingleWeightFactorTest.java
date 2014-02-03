@@ -96,7 +96,7 @@ public class SingleWeightFactorTest extends CrossFactorTestAbstract {
         tested.receive(3d, neighbors[1]);
         assertEquals(1d, tested.getMessage(neighbors[0]), DELTA);
         assertEquals(3d, tested.getMessage(neighbors[1]), DELTA);
-        tested.setPotential(0d);
+        tested.setPotential(5d);
         assertEquals(1d, tested.getMessage(neighbors[0]), DELTA);
         assertEquals(3d, tested.getMessage(neighbors[1]), DELTA);
     }
