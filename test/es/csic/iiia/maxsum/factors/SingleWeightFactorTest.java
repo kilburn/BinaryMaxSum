@@ -43,6 +43,9 @@ import es.csic.iiia.maxsum.MaxOperator;
 import es.csic.iiia.maxsum.Minimize;
 import java.util.Arrays;
 import java.util.logging.Logger;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
 import static org.mockito.AdditionalMatchers.eq;
 import org.junit.Test;
@@ -73,6 +76,29 @@ public class SingleWeightFactorTest extends CrossFactorTestAbstract {
         double potential = 0;
         double[] results    = new double[]{1, 1, 1};
         run(new Minimize(), values, potential, results);
+    }
+
+    @Test
+    public void testMessagesMaintainedWhenPotentialChanges() {
+        SingleWeightFactor tested = new SingleWeightFactor(new StandardFactor());
+        Factor[] neighbors = {mock(Factor.class), mock(Factor.class)};
+        tested.addNeighbor(neighbors[0]);
+        tested.addNeighbor(neighbors[1]);
+
+        assertEquals(0d, tested.getMessage(neighbors[0]), DELTA);
+        assertEquals(0d, tested.getMessage(neighbors[1]), DELTA);
+        tested.setPotential(1d);
+        assertEquals(0d, tested.getMessage(neighbors[0]), DELTA);
+        assertEquals(0d, tested.getMessage(neighbors[1]), DELTA);
+        tested.receive(1d, neighbors[0]);
+        assertEquals(1d, tested.getMessage(neighbors[0]), DELTA);
+        assertEquals(0d, tested.getMessage(neighbors[1]), DELTA);
+        tested.receive(3d, neighbors[1]);
+        assertEquals(1d, tested.getMessage(neighbors[0]), DELTA);
+        assertEquals(3d, tested.getMessage(neighbors[1]), DELTA);
+        tested.setPotential(5d);
+        assertEquals(1d, tested.getMessage(neighbors[0]), DELTA);
+        assertEquals(3d, tested.getMessage(neighbors[1]), DELTA);
     }
 
     private void init(Factor f, MaxOperator op, CommunicationAdapter com) {
