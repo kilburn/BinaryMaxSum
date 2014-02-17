@@ -36,8 +36,6 @@
  */
 package es.csic.iiia.maxsum.factors;
 
-import java.util.Arrays;
-
 import es.csic.iiia.maxsum.CommunicationAdapter;
 import es.csic.iiia.maxsum.Factor;
 import es.csic.iiia.maxsum.MaxOperator;
@@ -64,14 +62,6 @@ public class ConditionedSelectorFactorTest extends CrossFactorTestAbstract {
 
         run(new Maximize(), values, results, 0);
     }
-
-//    @Test
-//    public void testRun2() {
-//        double[] values = new double[] { -4, 3, 2 };
-//        double[] results = new double[] { -3, 2, 3};
-//
-//        run(new Maximize(), values, results, 2);
-//    }
 
     private void run(MaxOperator op, double[] values, double[] results, int conditionNeighborIdx) {
         CommunicationAdapter com = mock(CommunicationAdapter.class);
