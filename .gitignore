@@ -4,6 +4,7 @@ dependencies
 # Compiled classes/jars
 build
 dist
+target
 
 # Netbeans stuff
 nbproject/private
@@ -13,3 +14,7 @@ nbproject/private
 .externalToolBuilders/
 .project
 .settings/
+
+# IntelliJ stuff
+.idea/workspace.xml
+.idea/tasks.xml
