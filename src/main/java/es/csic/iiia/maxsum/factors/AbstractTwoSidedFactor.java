@@ -44,6 +44,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import es.csic.iiia.maxsum.util.NeighborComparator;
+import es.csic.iiia.maxsum.util.NeighborValue;
+
 /**
  * Abstract class for two-sided factors.
  *
@@ -59,13 +62,11 @@ public abstract class AbstractTwoSidedFactor<T> extends AbstractFactor<T> {
     /**
      * Number of elements in set A.
      */
-    @SuppressWarnings("WeakerAccess")
-    protected int nElementsA = -1;
+    protected int nElementsA = 0;
 
     /**
      * Accumulator of constraint checks
      */
-    @SuppressWarnings("WeakerAccess")
     protected long constraintChecks;
 
     /**
@@ -109,7 +110,12 @@ public abstract class AbstractTwoSidedFactor<T> extends AbstractFactor<T> {
 
     @Override
     public boolean removeNeighbor(T factor) {
-        int index = getNeighbors().lastIndexOf(factor);
+        final int nNeighbors = getNeighbors().size();
+        int index = 0;
+
+        while(index < nNeighbors && getNeighbors().get(index) != factor) {
+            index++;
+        }
 
         boolean isInA = index >= 0 && index < nElementsA;
         if (isInA) {
@@ -126,7 +132,6 @@ public abstract class AbstractTwoSidedFactor<T> extends AbstractFactor<T> {
      * @return <em>pair list</em> A list of <neighbor, message value> pairs for
      * the factors in set A.
      */
-    @SuppressWarnings("WeakerAccess")
     protected List<NeighborValue<T>> getSortedSetAPairs() {
         List<NeighborValue<T>> setAPairs = new ArrayList<NeighborValue<T>>(nElementsA);
 
@@ -150,7 +155,6 @@ public abstract class AbstractTwoSidedFactor<T> extends AbstractFactor<T> {
      * @return <em>pair list</em> B list of <neighbor, message value> pairs for
      * the factors in set B.
      */
-    @SuppressWarnings("WeakerAccess")
     protected List<NeighborValue<T>> getSortedSetBPairs() {
         final int nNeighbors = getNeighbors().size();
         final int nElementsB = nNeighbors - nElementsA;
@@ -179,7 +183,6 @@ public abstract class AbstractTwoSidedFactor<T> extends AbstractFactor<T> {
      * @return <em>reserve</em> the difference between the number of active
      *  neighbors in sets A and B.
      */
-    @SuppressWarnings("WeakerAccess")
     protected int getReserve(Map<T, Boolean> values) {
         int reserve = 0;
 
