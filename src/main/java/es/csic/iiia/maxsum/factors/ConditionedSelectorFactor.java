@@ -70,6 +70,15 @@ public class ConditionedSelectorFactor<T> extends AbstractFactor<T> {
     }
 
     /**
+     * Get the neighbor that represents the conditional variable.
+     *
+     * @return the Neighbor that represents the conditional variable.
+     */
+    public T getConditionNeighbor() {
+        return conditionNeighbor;
+    }
+
+    /**
      * Set the neighbor that represents the conditional variable.
      *
      * @param condition conditional variable.
