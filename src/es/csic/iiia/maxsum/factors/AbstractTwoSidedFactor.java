@@ -59,7 +59,7 @@ public abstract class AbstractTwoSidedFactor<T> extends AbstractFactor<T> {
     /**
      * Number of elements in set A.
      */
-    protected int nElementsA = -1;
+    protected int nElementsA = 0;
 
     /**
      * Accumulator of constraint checks
@@ -107,7 +107,12 @@ public abstract class AbstractTwoSidedFactor<T> extends AbstractFactor<T> {
 
     @Override
     public boolean removeNeighbor(T factor) {
-        int index = getNeighbors().lastIndexOf(factor);
+        final int nNeighbors = getNeighbors().size();
+        int index = 0;
+
+        while(index < nNeighbors && getNeighbors().get(index) != factor) {
+            index++;
+        }
 
         boolean isInA = index >= 0 && index < nElementsA;
         if (isInA) {
