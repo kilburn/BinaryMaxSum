@@ -25,6 +25,9 @@
         <module name="BinaryMaxSum" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="BinaryMaxSum" target="1.6" />
+    </bytecodeTargetLevel>
   </component>
 </project>
 
