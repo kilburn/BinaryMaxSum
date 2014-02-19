@@ -4,9 +4,22 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>BinaryMaxSum</groupId>
-    <artifactId>BinaryMaxSum</artifactId>
+    <name>BinaryMaxSum</name>
+    <description>Library of Binary Max-Sum factors for optimization</description>
+    <url>https://github.com/kilburn/BinaryMaxSum></url>
+    <organization>
+        <name>IIIA-CSIC</name>
+        <url>http://www.iiia.csic.es</url>
+    </organization>
+    <groupId>es.csic.iiia.maxsum</groupId>
+    <artifactId>bms</artifactId>
     <version>3.0</version>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <built-by>${user.name}</built-by>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -18,7 +31,8 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>1.8.4</version>
+            <version>1.8.5</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -26,7 +40,63 @@
             <artifactId>jsr305</artifactId>
             <version>2.0.1</version>
         </dependency>
-
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Built-By>${built-by}</Built-By>
+                        </manifestEntries>
+                        <manifest>
+                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <descriptors>
+                        <descriptor>src/main/assembly/all.xml</descriptor>
+                    </descriptors>
+                    <archive>
+                        <manifestEntries>
+                            <Built-By>${built-by}</Built-By>
+                        </manifestEntries>
+                        <manifest>
+                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                        </manifest>
+                    </archive>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
