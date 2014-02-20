@@ -4,16 +4,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <name>BinaryMaxSum</name>
-    <description>Library of Binary Max-Sum factors for optimization</description>
-    <url>https://github.com/kilburn/BinaryMaxSum></url>
-    <organization>
-        <name>IIIA-CSIC</name>
-        <url>http://www.iiia.csic.es</url>
-    </organization>
     <groupId>es.csic.iiia.maxsum</groupId>
     <artifactId>bms</artifactId>
     <version>3.0</version>
+    <name>BinaryMaxSum</name>
+    <description>Binary Max-Sum library for approximate combinatorial optimization</description>
+    <url>https://github.com/kilburn/BinaryMaxSum></url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -98,5 +94,57 @@
             </plugin>
         </plugins>
     </build>
+
+    <licenses>
+        <license>
+            <name>BSD 3-Clause</name>
+            <url>http://opensource.org/licenses/BSD-3-Clause</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <organization>
+        <name>IIIA-CSIC</name>
+        <url>http://www.iiia.csic.es</url>
+    </organization>
+
+    <developers>
+        <developer>
+            <id>mpujol</id>
+            <name>Marc Pujol</name>
+            <email>mpujol@iiia.csic.es</email>
+            <url>http://www.iiia.csic.es/~pujol</url>
+            <organization>IIIA-CSIC</organization>
+            <organizationUrl>http://www.iiia.csic.es</organizationUrl>
+            <timezone>Europe/Madrid</timezone>
+        </developer>
+    </developers>
+
+    <contributors>
+        <contributor>
+            <name>Toni Penya</name>
+            <email>tonipenya@iiia.csic.es</email>
+            <url>http://www.iiia.csic.es/~tonipenya</url>
+            <organization>IIIA-CSIC</organization>
+            <organizationUrl>http://www.iiia.csic.es</organizationUrl>
+            <timezone>Europe/Madrid</timezone>
+        </contributor>
+    </contributors>
+
+    <scm>
+        <connection>scm:git:git://github.com/kilburn/BinaryMaxSum.git</connection>
+        <developerConnection>scm:git:git://github.com/kilburn/BinaryMaxSum.git</developerConnection>
+        <url>scm:git:git://github.com/kilburn/BinaryMaxSum.git</url>
+    </scm>
+
+    <issueManagement>
+        <system>GitHub</system>
+        <url>https://github.com/kilburn/BinaryMaxSum/issues</url>
+    </issueManagement>
+
+    <ciManagement>
+        <system>Travis CI</system>
+        <url>https://travis-ci.org/kilburn/BinaryMaxSum</url>
+    </ciManagement>
 
 </project>
