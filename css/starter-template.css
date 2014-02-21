@@ -1,0 +1,30 @@
+body {
+  padding-top: 50px;
+}
+.starter-template {
+  padding: 40px 15px;
+  text-align: center;
+}
+
+.navbar-inverse {
+    background-color: #865820;
+    border-color: #c69860;
+}
+
+.navbar-inverse .navbar-nav>li>a {
+    color: #ccc;
+}
+
+.navbar-inverse .navbar-nav>.active>a, .navbar-inverse .navbar-nav>.active>a:hover, .navbar-inverse .navbar-nav>.active>a:focus {
+    background-color: #71430a;
+}
+
+.banner {
+  text-align: left;
+  background-color: #d6b756;
+  color: #fff;
+}
+
+.navbar-brand {
+    padding: 3px 15px;
+}
