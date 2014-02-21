@@ -28,3 +28,7 @@ body {
 .navbar-brand {
     padding: 3px 15px;
 }
+
+#contact {
+    text-align: center;
+}
