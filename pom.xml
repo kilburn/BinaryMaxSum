@@ -6,7 +6,7 @@
 
     <groupId>es.csic.iiia.maxsum</groupId>
     <artifactId>bms</artifactId>
-    <version>3.0</version>
+    <version>1.0.0-SNAPSHOT</version>
     <name>Binary Max-Sum</name>
     <description>Binary Max-Sum library for approximate combinatorial optimization</description>
     <url>https://binarymaxsum.github.io/</url>
