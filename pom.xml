@@ -7,9 +7,9 @@
     <groupId>es.csic.iiia.maxsum</groupId>
     <artifactId>bms</artifactId>
     <version>3.0</version>
-    <name>BinaryMaxSum</name>
+    <name>Binary Max-Sum</name>
     <description>Binary Max-Sum library for approximate combinatorial optimization</description>
-    <url>https://github.com/kilburn/BinaryMaxSum></url>
+    <url>https://binarymaxsum.github.io/</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -113,7 +113,7 @@
             <id>mpujol</id>
             <name>Marc Pujol</name>
             <email>mpujol@iiia.csic.es</email>
-            <url>http://www.iiia.csic.es/~pujol</url>
+            <url>http://www.iiia.csic.es/~mpujol</url>
             <organization>IIIA-CSIC</organization>
             <organizationUrl>http://www.iiia.csic.es</organizationUrl>
             <timezone>Europe/Madrid</timezone>
@@ -132,19 +132,19 @@
     </contributors>
 
     <scm>
-        <connection>scm:git:git://github.com/kilburn/BinaryMaxSum.git</connection>
-        <developerConnection>scm:git:git://github.com/kilburn/BinaryMaxSum.git</developerConnection>
-        <url>scm:git:git://github.com/kilburn/BinaryMaxSum.git</url>
+        <connection>scm:git:git://github.com/binarymaxsum/binarymaxsum.git</connection>
+        <developerConnection>scm:git:git://github.com/binarymaxsum/binarymaxsum.git</developerConnection>
+        <url>scm:git:git://github.com/binarymaxsum/binarymaxsum.git</url>
     </scm>
 
     <issueManagement>
         <system>GitHub</system>
-        <url>https://github.com/kilburn/BinaryMaxSum/issues</url>
+        <url>https://github.com/binarymaxsum/binarymaxsum/issues</url>
     </issueManagement>
 
     <ciManagement>
         <system>Travis CI</system>
-        <url>https://travis-ci.org/kilburn/BinaryMaxSum</url>
+        <url>https://travis-ci.org/binarymaxsum/binarymaxsum</url>
     </ciManagement>
 
 </project>
