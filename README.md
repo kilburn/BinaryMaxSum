@@ -1,4 +1,4 @@
-[![Build Status](https://api.travis-ci.org/binarymaxsum/binarymaxsum.png)](https://travis-ci.org/binarymaxsum/binarymaxsum)
+[![Build Status](https://api.travis-ci.org/binarymaxsum/binarymaxsum.png?branch=master)](https://travis-ci.org/binarymaxsum/binarymaxsum)
 
 BinaryMaxSum
 ============
