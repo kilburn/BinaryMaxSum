@@ -175,9 +175,7 @@ public class CardinalityFactor<T> extends AbstractFactor<T> {
 
             final T f = values.get(pos).factor;
             LOG.log(Level.FINE, "Msg1: {0}, Msg0:{1}", new Object[]{msg1, msg0});
-            final double msg = msg1 - msg0;
-            // NaN's may appear if we receive infinity values.
-            send(Double.isNaN(msg) ? 0 : msg, f);
+            send(msg1 - msg0, f);
         }
         constraintChecks += size*3;
 
