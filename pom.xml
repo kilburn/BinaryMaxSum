@@ -233,9 +233,9 @@
     </contributors>
 
     <scm>
-        <connection>scm:git:git://github.com/binarymaxsum/binarymaxsum.git</connection>
-        <developerConnection>scm:git:git://github.com/binarymaxsum/binarymaxsum.git</developerConnection>
-        <url>scm:git:git://github.com/binarymaxsum/binarymaxsum.git</url>
+        <connection>scm:git:https://github.com/binarymaxsum/binarymaxsum.git</connection>
+        <developerConnection>scm:git:https://github.com/binarymaxsum/binarymaxsum.git</developerConnection>
+        <url>scm:git:https://github.com/binarymaxsum/binarymaxsum.git</url>
     </scm>
 
     <issueManagement>
