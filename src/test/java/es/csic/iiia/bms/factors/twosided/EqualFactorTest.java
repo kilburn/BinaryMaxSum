@@ -1,7 +1,7 @@
 /*
  * Software License Agreement (BSD License)
  *
- * Copyright 2013-2014 Marc Pujol <mpujol@iiia.csic.es>
+ * Copyright 2013 Marc Pujol <mpujol@iiia.csic.es>.
  *
  * Redistribution and use of this software in source and binary forms, with or
  * without modification, are permitted provided that the following conditions
@@ -34,118 +34,46 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package es.csic.iiia.bms.factors;
+package es.csic.iiia.bms.factors.twosided;
 
 import es.csic.iiia.bms.CommunicationAdapter;
 import es.csic.iiia.bms.Factor;
 import es.csic.iiia.bms.MaxOperator;
 import es.csic.iiia.bms.Maximize;
-import es.csic.iiia.bms.factors.twosided.AbstractTwoSidedFactor;
-import es.csic.iiia.bms.factors.twosided.TwoSidedFactorTestAbstract;
+import es.csic.iiia.bms.factors.Constants;
+import es.csic.iiia.bms.factors.StandardFactor;
 import org.junit.Test;
 import org.mockito.AdditionalMatchers;
 
+import static org.mockito.AdditionalMatchers.eq;
 import static org.mockito.Mockito.*;
 
 /**
  *
  * @author Toni Penya-Alba <tonipenya@iiia.csic.es>
  */
-@SuppressWarnings({"unchecked","rawtypes", "deprecation"})
-public class TwoSidedReserveFactorTest extends TwoSidedFactorTestAbstract {
+@SuppressWarnings({"unchecked","rawtypes"})
+public class EqualFactorTest extends TwoSidedFactorTestAbstract {
 
     @Test
     public void testRun1() {
-        double[] values = new double[] { 3, 2, -1, 1, -1, -3 };
-        double[] results = new double[] { 0, 0, 0, 0, 0, 0 };
-
-        run(new Maximize(), values, results, 3);
-    }
-
-    @Test
-    public void testRun2() {
-        double[] values = new double[] { 2, -1, -1, 2, 1, -1 };
-        double[] results = new double[] { 1, 1, 1, -1, -1, -1 };
-
-        run(new Maximize(), values, results, 3);
-    }
-
-    @Test
-    public void testRun3() {
-        double[] values = new double[] { 1, -1, 1, -1 };
-        double[] results = new double[] { 1, 0, 0, -1 };
-
-        run(new Maximize(), values, results, 2);
-    }
-
-    @Test
-    public void testRun4() {
-        double[] values = new double[] { 6, 4, 8 };
-        double[] results = new double[] { 8, -8, -4 };
+        double[] values = new double[] { 1, 2 };
+        double[] results = new double[] { 2, 1 };
 
         run(new Maximize(), values, results, 1);
     }
 
     @Test
-    public void testRunEmptyA1() {
-        double[] values = new double[] { 1, -1 };
-        double[] results = new double[] { 0, 0 };
+    public void testRun2() {
+        double[] values = new double[] { -4, 3, 2 };
+        double[] results = new double[] { -3, 2, 3};
 
         run(new Maximize(), values, results, 2);
-    }
-
-    @Test
-    public void testRunEmptyA2() {
-        double[] values = new double[] { -1, -2 };
-        double[] results = new double[] { 0, 0 };
-
-        run(new Maximize(), values, results, 2);
-    }
-
-    @Test
-    public void testRunEmptyA3() {
-        double[] values = new double[] { 1, 2 };
-        double[] results = new double[] { 0, 0 };
-
-        run(new Maximize(), values, results, 2);
-    }
-
-    @Test
-    public void testRunEmptyB1() {
-        MaxOperator op = new Maximize();
-
-        double[] values = new double[] { -1, 1 };
-        double[] results = new double[] { op.getWorstValue(),
-                op.getWorstValue() };
-
-        run(op, values, results, 0);
-    }
-
-    @Test
-    public void testRunEmptyB2() {
-        MaxOperator op = new Maximize();
-
-        double[] values = new double[] { -1, -2 };
-        double[] results = new double[] { op.getWorstValue(),
-                op.getWorstValue() };
-
-        run(new Maximize(), values, results, 0);
-    }
-
-    @Test
-    public void testRunEmptyB3() {
-        MaxOperator op = new Maximize();
-
-        double[] values = new double[] { 1, 2 };
-        double[] results = new double[] { op.getWorstValue(),
-                op.getWorstValue() };
-
-        run(op, values, results, 0);
     }
 
     @Override
     protected AbstractTwoSidedFactor createFactor() {
-        return new TwoSidedReserveFactor();
+        return new EqualFactor();
     }
 
     private void run(MaxOperator op, double[] values, double[] results,
@@ -154,7 +82,7 @@ public class TwoSidedReserveFactorTest extends TwoSidedFactorTestAbstract {
 
         // Setup incoming messages
         Factor[] cfs = new Factor[values.length];
-        TwoSidedReserveFactor s = new TwoSidedReserveFactor();
+        EqualFactor s = new EqualFactor();
         s.setNElementsA(nElementsA);
         s.setCommunicationAdapter(com);
         s.setMaxOperator(op);
@@ -183,7 +111,7 @@ public class TwoSidedReserveFactorTest extends TwoSidedFactorTestAbstract {
 
     private Factor buildSpecificFactor(MaxOperator op, Factor[] neighbors,
             int nElementsA) {
-        TwoSidedReserveFactor factor = new TwoSidedReserveFactor();
+        EqualFactor factor = new EqualFactor();
         factor.setNElementsA(nElementsA);
         factor.setMaxOperator(op);
         link(factor, neighbors);
@@ -215,10 +143,9 @@ public class TwoSidedReserveFactorTest extends TwoSidedFactorTestAbstract {
                 }
             }
 
-            values[configurationIdx] = (reserve < 0) ? op.getWorstValue() : 0;
+            values[configurationIdx] = (reserve != 0) ? op.getWorstValue() : 0;
         }
 
         return values;
     }
-
 }

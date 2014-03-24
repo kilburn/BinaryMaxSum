@@ -1,7 +1,7 @@
 /*
  * Software License Agreement (BSD License)
  *
- * Copyright 2013 Marc Pujol <mpujol@iiia.csic.es>.
+ * Copyright 2013-2014 Marc Pujol <mpujol@iiia.csic.es>
  *
  * Redistribution and use of this software in source and binary forms, with or
  * without modification, are permitted provided that the following conditions
@@ -36,11 +36,7 @@
  */
 package es.csic.iiia.bms.factors;
 
-import es.csic.iiia.bms.MaxOperator;
-import es.csic.iiia.bms.util.NeighborValue;
-
-import java.util.List;
-import java.util.Map;
+import es.csic.iiia.bms.factors.twosided.GreaterOrEqualFactor;
 
 /**
  * Max-sum "Two-sided reserve" factor.
@@ -55,123 +51,8 @@ import java.util.Map;
  *
  * @param <T> Type of the factor's identity.
  * @author Toni Penya-Alba <tonipenya@iiia.csic.es>
+ * @deprecated use {@link es.csic.iiia.bms.factors.twosided.GreaterOrEqualFactor} instead.
  */
-public class TwoSidedReserveFactor<T> extends AbstractTwoSidedFactor<T> {
-
-    @Override
-    public long run() {
-        final MaxOperator op = getMaxOperator();
-        final int nNeighbors = getNeighbors().size();
-        final int nElementsB = nNeighbors - nElementsA;
-        constraintChecks = 0;
-
-        if (nElementsA == 0) {
-            for (T neigh : getNeighbors()) {
-                send(op.getWorstValue(), neigh);
-            }
-
-            return nNeighbors;
-        }
-
-        // Optimization. If there are no elements in set B, messages for the
-        // members in set A is always 0.
-        if (nElementsB == 0) {
-            for (T neigh : getNeighbors()) {
-                send(0.0, neigh);
-            }
-
-            return nNeighbors;
-        }
-
-        final List<NeighborValue<T>> setAPairs = getSortedSetAPairs();
-        final List<NeighborValue<T>> setBPairs = getSortedSetBPairs();
-
-        final int theta = getTheta(setAPairs, setBPairs);
-
-        final double nuaTheta = (theta == 0) ? -op.getWorstValue() : setAPairs
-                .get(theta - 1).value;
-        final double nuAThetaPlus = (nElementsA > theta) ? setAPairs.get(theta).value
-                : op.getWorstValue();
-        final double nuBTheta = (theta == 0) ? -op.getWorstValue() : setBPairs
-                .get(theta - 1).value;
-        final double nuBThetaPlus = (nElementsB > theta) ? setBPairs
-                .get(theta).value : op.getWorstValue();
-
-        final double A = op.max(nuAThetaPlus, -nuBTheta);
-        final double B = op.max(0, op.max(nuBThetaPlus, -nuaTheta));
-
-        constraintChecks += 6;
-
-        final int nPositiveA = getNPositive(setAPairs);
-        if (nPositiveA > theta) {
-            for (T neighbor : getNeighbors()) {
-                send(0, neighbor);
-            }
-        } else {
-            final int nActiveA = Math.max(theta, nPositiveA);
-            // Send -A to active 'a's
-            for (int i = 0; i < nActiveA; i++) {
-                send(-A, setAPairs.get(i).neighbor);
-            }
-
-            // Send B to inactive 'a's
-            for (int i = nActiveA; i < nElementsA; i++) {
-                send(B, setAPairs.get(i).neighbor);
-            }
-
-            // Send -B to active 'b's
-            for (int i = 0; i < theta; i++) {
-                send(-B, setBPairs.get(i).neighbor);
-            }
-
-            // Send A to inactive 'b's
-            for (int i = theta; i < nElementsB; i++) {
-                send(A, setBPairs.get(i).neighbor);
-            }
-        }
-        constraintChecks += nNeighbors;
-
-        return constraintChecks;
-    }
-
-    @Override
-    protected double eval(Map<T, Boolean> values) {
-        final int reserve = getReserve(values);
-
-        return (reserve >= 0) ? 0 : getMaxOperator().getWorstValue();
-    }
-
-    private int getTheta(List<NeighborValue<T>> setAPairs, List<NeighborValue<T>> setBPairs) {
-        final MaxOperator op = getMaxOperator();
-        final int nElementsB = setBPairs.size();
-        final int n = Math.min(nElementsA, nElementsB);
-
-        int theta = 0;
-        while (theta < n
-                && op.compare(setBPairs.get(theta).value, 0) > 0
-                && op.compare(setBPairs.get(theta).value
-                        + setAPairs.get(theta).value, 0) >= 0) {
-            theta++;
-        }
-
-        constraintChecks += theta * 3;
-
-        return theta;
-    }
-
-    private int getNPositive(List<NeighborValue<T>> pairs) {
-        final int pairsLength = pairs.size();
-        final MaxOperator op = getMaxOperator();
-
-        int nPositive = 0;
-        while (nPositive < pairsLength
-                && op.compare(pairs.get(nPositive).value, 0) >= 0) {
-            nPositive++;
-        }
-
-        constraintChecks += nPositive;
-
-        return nPositive;
-    }
-
+@Deprecated
+public class TwoSidedReserveFactor<T> extends GreaterOrEqualFactor<T> {
 }

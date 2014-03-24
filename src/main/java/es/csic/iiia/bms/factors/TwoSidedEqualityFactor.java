@@ -1,7 +1,7 @@
 /*
  * Software License Agreement (BSD License)
  *
- * Copyright 2013 Marc Pujol <mpujol@iiia.csic.es>.
+ * Copyright 2013-2014 Marc Pujol <mpujol@iiia.csic.es>
  *
  * Redistribution and use of this software in source and binary forms, with or
  * without modification, are permitted provided that the following conditions
@@ -36,11 +36,7 @@
  */
 package es.csic.iiia.bms.factors;
 
-import es.csic.iiia.bms.MaxOperator;
-import es.csic.iiia.bms.util.NeighborValue;
-
-import java.util.List;
-import java.util.Map;
+import es.csic.iiia.bms.factors.twosided.EqualFactor;
 
 /**
  * Max-sum "Two-sided equality" factor.
@@ -55,85 +51,8 @@ import java.util.Map;
  *
  * @param <T> Type of the factor's identity.
  * @author Toni Penya-Alba <tonipenya@iiia.csic.es>
+ * @deprecated use {@link es.csic.iiia.bms.factors.twosided.EqualFactor} instead.
  */
-public class TwoSidedEqualityFactor<T> extends AbstractTwoSidedFactor<T> {
-
-    @Override
-    public long run() {
-        final MaxOperator op = getMaxOperator();
-        final int nNeighbors = getNeighbors().size();
-        final int nElementsB = nNeighbors - nElementsA;
-        constraintChecks = 0;
-
-        if (nElementsA == 0 || nElementsB == 0) {
-            for (T neigh : getNeighbors()) {
-                send(op.getWorstValue(), neigh);
-            }
-
-            return nNeighbors;
-        }
-
-        final List<NeighborValue<T>> setAPairs = getSortedSetAPairs();
-        final List<NeighborValue<T>> setBPairs = getSortedSetBPairs();
-
-        final int eta = getEta(setAPairs, setBPairs);
-
-        final double nuAEta = (eta == 0) ? -op.getWorstValue() : setAPairs.get(eta-1).value;
-        final double nuAEtaPlusOne = (nElementsA > eta) ? setAPairs.get(eta).value : op.getWorstValue();
-        final double nuBEta = (eta == 0) ? -op.getWorstValue() : setBPairs.get(eta-1).value;
-        final double nuBEtaPlusOne = (nElementsB > eta) ? setBPairs.get(eta).value : op.getWorstValue();
-
-        final double tauPlus = -op.max(-nuBEta, nuAEtaPlusOne);
-        final double tauMinus = op.max(-nuAEta, nuBEtaPlusOne);
-
-        constraintChecks += 6;
-
-        // active sellers
-        for (int i = 0; i < eta; i++) {
-            send(tauPlus, setAPairs.get(i).neighbor);
-        }
-
-        // inactive sellers
-        for (int i = eta; i < nElementsA; i++) {
-            send(tauMinus, setAPairs.get(i).neighbor);
-        }
-
-        // active buyers
-        for (int i = 0; i < eta; i++) {
-            send(-tauMinus, setBPairs.get(i).neighbor);
-        }
-
-        // inactive buyers
-        for (int i = eta; i < nElementsB; i++) {
-            send(-tauPlus, setBPairs.get(i).neighbor);
-        }
-
-        constraintChecks += nNeighbors;
-
-        return constraintChecks;
-    }
-
-    @Override
-    protected double eval(Map<T, Boolean> values) {
-        final int reserve = getReserve(values);
-
-        return (reserve == 0) ? 0 : getMaxOperator().getWorstValue();
-    }
-
-    private int getEta(List<NeighborValue<T>> setAPairs, List<NeighborValue<T>> setBPairs) {
-        final MaxOperator op = getMaxOperator();
-        final int nElementsB = setBPairs.size();
-        final int n = Math.min(nElementsA, nElementsB);
-
-        int eta = 0;
-        while (eta < n
-                && op.compare(
-                        setBPairs.get(eta).value + setAPairs.get(eta).value, 0) >= 0) {
-            eta++;
-        }
-
-        constraintChecks += eta * 3;
-
-        return eta;
-    }
+@Deprecated
+public class TwoSidedEqualityFactor<T> extends EqualFactor<T> {
 }
