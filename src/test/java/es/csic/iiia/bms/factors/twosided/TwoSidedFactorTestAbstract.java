@@ -1,6 +1,8 @@
-package es.csic.iiia.bms.factors;
+package es.csic.iiia.bms.factors.twosided;
 
 import es.csic.iiia.bms.Factor;
+import es.csic.iiia.bms.factors.CrossFactorTestAbstract;
+import es.csic.iiia.bms.factors.twosided.AbstractTwoSidedFactor;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
