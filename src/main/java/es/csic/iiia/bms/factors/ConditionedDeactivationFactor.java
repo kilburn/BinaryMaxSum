@@ -65,7 +65,7 @@ public class ConditionedDeactivationFactor<T> extends AbstractFactor<T>{
 
         for (T neighbor : getNeighbors()) {
             double value;
-            if (neighbor == exemplar) {
+            if (neighbor.equals(exemplar)) {
                 value = nonExemplarSum;
             } else {
                 double a = exemplarMessage + nonExemplarSum - op.max(getMessage(neighbor), 0);
@@ -82,7 +82,7 @@ public class ConditionedDeactivationFactor<T> extends AbstractFactor<T>{
         final MaxOperator op = getMaxOperator();
         double sum = 0;
         for (T neighbor : getNeighbors()) {
-            if (neighbor == exemplar) {
+            if (neighbor.equals(exemplar)) {
                 continue;
             }
 
