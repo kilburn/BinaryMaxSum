@@ -36,10 +36,7 @@
  */
 package es.csic.iiia.bms.factors;
 
-import es.csic.iiia.bms.CommunicationAdapter;
-import es.csic.iiia.bms.Factor;
-import es.csic.iiia.bms.MaxOperator;
-import es.csic.iiia.bms.Minimize;
+import es.csic.iiia.bms.*;
 import es.csic.iiia.bms.factors.CardinalityFactor.CardinalityFunction;
 import org.junit.Test;
 
@@ -57,23 +54,43 @@ import static org.mockito.Mockito.*;
 @SuppressWarnings({"unchecked","rawtypes"})
 public class SingleWeightFactorTest extends CrossFactorTestAbstract {
 
-    private static final double K     = 1;
-    private static final double ALPHA = 2;
+//    private static final double K     = 1;
+//    private static final double ALPHA = 2;
+//
+//    @Test
+//    public void testRun1() {
+//        double[] values     = new double[]{0, 1, 2};
+//        double potential = 0;
+//        double[] results    = new double[]{1, 1, 1};
+//        run(new Minimize(), values, potential, results);
+//    }
+//
+//    @Test
+//    public void testRun2() {
+//        double[] values     = new double[]{3, 1, 2};
+//        double potential = 0;
+//        double[] results    = new double[]{1, 1, 1};
+//        run(new Minimize(), values, potential, results);
+//    }
 
     @Test
-    public void testRun1() {
-        double[] values     = new double[]{0, 1, 2};
-        double potential = 0;
-        double[] results    = new double[]{1, 1, 1};
-        run(new Minimize(), values, potential, results);
-    }
-
-    @Test
-    public void testRun2() {
-        double[] values     = new double[]{3, 1, 2};
-        double potential = 0;
-        double[] results    = new double[]{1, 1, 1};
-        run(new Minimize(), values, potential, results);
+    public void testRun3() {
+        double[] values     = new double[]{1, 5};
+        double potential = 3;
+        double[] results    = new double[]{8, 4};
+        run(new Maximize(), values, potential, results);
+//      Factor[] neighbors = {mock(Factor.class), mock(Factor.class)};
+//
+//      VariableFactor variableFactor = new VariableFactor();
+//      SingleWeightFactor tested = new SingleWeightFactor(variableFactor);
+//      tested.setPotential(3);
+//      tested.addNeighbor(neighbors[0]);
+//      tested.addNeighbor(neighbors[1]);
+//
+//      tested.receive(2d, neighbors[0]);
+//      tested.receive(5d, neighbors[1]);
+//
+//      tested.run();
     }
 
     @Test
@@ -113,14 +130,14 @@ public class SingleWeightFactorTest extends CrossFactorTestAbstract {
 
         // Build a factor that is made of independent potentials plus a
         // cardinality workload.
-        CardinalityFactor cardinal = new CardinalityFactor();
-        cardinal.setFunction(new CardinalityFunction() {
-            @Override
-            public double getCost(int nActiveVariables) {
-                return K * Math.pow(nActiveVariables, ALPHA);
-            }
-        });
-        SingleWeightFactor f = new SingleWeightFactor(cardinal);
+        VariableFactor variableFactor = new VariableFactor();
+//        variableFactor.setFunction(new CardinalityFunction() {
+//          @Override
+//          public double getCost(int nActiveVariables) {
+//            return K * Math.pow(nActiveVariables, ALPHA);
+//          }
+//        });
+        SingleWeightFactor f = new SingleWeightFactor(variableFactor);
         f.setPotential(potential);
         init(f, op, com);
 
@@ -135,7 +152,8 @@ public class SingleWeightFactorTest extends CrossFactorTestAbstract {
         }
 
         // This makes the factor run and send messages through the mocked com
-        cardinal.run();
+//        variableFactor.run();
+      f.run();
 
         // Check expectations
         for (int i=0; i<sfs.length; i++) {
@@ -154,7 +172,7 @@ public class SingleWeightFactorTest extends CrossFactorTestAbstract {
     }
 
     private Factor buildSpecificFactor(MaxOperator op, Factor[] neighbors, double potential) {
-        SingleWeightFactor factor = new SingleWeightFactor(new SelectorFactor());
+        SingleWeightFactor factor = new SingleWeightFactor(new VariableFactor());
         factor.setMaxOperator(op);
 
         factor.setPotential(potential);
@@ -172,17 +190,28 @@ public class SingleWeightFactorTest extends CrossFactorTestAbstract {
     }
 
     public double[] buildPotential(MaxOperator op, Factor[] neighbors, double potential) {
-        final int nNeighbors = neighbors.length;
+//        final int nNeighbors = neighbors.length;
+//
+//        // Initialize the cost/utilities array with "no goods"
+//        double[] values = new double[1 << nNeighbors];
+//        Arrays.fill(values, op.getWorstValue());
+//
+//        // Now set the rows with exactly one variable active to the corresponding potential
+//        for (int idx=1; idx<values.length; idx <<= 1) {
+//            values[idx] = potential;
+//        }
+//
+//        return values;
+      final int nNeighbors = neighbors.length;
 
-        // Initialize the cost/utilities array with "no goods"
-        double[] values = new double[1 << nNeighbors];
-        Arrays.fill(values, op.getWorstValue());
+      // Initialize the cost/utilities array with "no goods"
+      double[] values = new double[1 << nNeighbors];
+      Arrays.fill(values, op.getWorstValue());
 
-        // Now set the rows with exactly one variable active to the corresponding potential
-        for (int idx=1; idx<values.length; idx <<= 1) {
-            values[idx] = potential;
-        }
+      // Now set the rows with either no or all variables active to "0"
+      values[0] = 0;
+      values[values.length-1] = potential;
 
-        return values;
+      return values;
     }
 }

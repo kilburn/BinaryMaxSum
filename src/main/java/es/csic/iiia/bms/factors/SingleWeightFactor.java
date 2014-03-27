@@ -64,7 +64,7 @@ public class SingleWeightFactor<T> extends ProxyFactor<T> {
 
     @Override
     public double getMessage(T neighbor) {
-        return super.getMessage(neighbor) - getPotential();
+        return super.getMessage(neighbor);
     }
 
     /**
@@ -82,28 +82,22 @@ public class SingleWeightFactor<T> extends ProxyFactor<T> {
      * @param newPotential cost/utility of activating a variable
      */
     public void setPotential(double newPotential) {
-        for (T neighbor: getNeighbors()) {
-            double originalMessage = getMessage(neighbor);
-            super.receive(originalMessage + newPotential, neighbor);
-        }
-
         potential = newPotential;
     }
 
     @Override
     public double evaluate(Map<T, Boolean> values) {
-        double value = super.evaluate(values);
         for (T neighbor : getNeighbors()) {
             if (values.get(neighbor)) {
-                value += potential;
+                return getInnerFactor().evaluate(values) + potential;
             }
         }
-        return value;
+        return getInnerFactor().evaluate(values);
     }
 
     @Override
     public void receive(double message, T sender) {
-        super.receive(message + potential, sender);
+        super.receive(message, sender);
     }
 
     @Override
